@@ -1,4 +1,4 @@
-﻿using RestApiBackend.Contracts;
+﻿using Backend.Common.Contracts;
 
 namespace Backend.Html.Controllers;
 

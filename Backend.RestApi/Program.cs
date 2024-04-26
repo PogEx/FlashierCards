@@ -1,6 +1,7 @@
 using Autofac;
-using RestApiBackend.Contracts;
-using RestApiBackend.IoC;
+using Backend.Common.Contracts;
+using Backend.Common.IoC;
+using RestApiBackend.IoC.Modules;
 
 namespace RestApiBackend;
 
@@ -10,7 +11,9 @@ public class Program
     {
         ContainerBuilder containerBuilder = new ();
         
-        containerBuilder.SetupContainer();
+        containerBuilder.SetupContainer(args);
+        containerBuilder.RegisterModule(new RestModule());
+        
         IContainer container = containerBuilder.Build();
 
         foreach (IEndpointMapper mapper in container.Resolve<IEnumerable<IEndpointMapper>>())

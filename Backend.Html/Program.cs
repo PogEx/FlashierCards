@@ -1,32 +1,26 @@
+using Autofac;
+using Backend.Common.Contracts;
+using Backend.Common.IoC;
+using Backend.Html.IoC.Modules;
+
 namespace Backend.Html;
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        ContainerBuilder containerBuilder = new ();
+        
+        containerBuilder.SetupContainer(args);
+        containerBuilder.RegisterModule(new HtmlModule());
+        
+        IContainer container = containerBuilder.Build();
 
-        // Add services to the container.
-        builder.Services.AddAuthorization();
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        foreach (IEndpointMapper mapper in container.Resolve<IEnumerable<IEndpointMapper>>())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            mapper.MapEndpoint();
         }
-
-        app.UseHttpsRedirection();
-
-        app.UseAuthorization();
-
-
-        app.Run();
+        
+        container.Resolve<WebApplication>().Run();
     }
 }
