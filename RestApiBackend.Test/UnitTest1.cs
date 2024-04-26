@@ -1,3 +1,5 @@
+using FluentAssertions;
+
 namespace RestApiBackend.Test;
 
 public class Tests
@@ -10,6 +12,6 @@ public class Tests
     [Test]
     public void Test1()
     {
-        Assert.Pass();
+        "dbuzs".Should().BeEmpty();
     }
 }
