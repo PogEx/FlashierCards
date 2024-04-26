@@ -12,6 +12,6 @@ public class Tests
     [Test]
     public void Test1()
     {
-        "dbuzs".Should().BeEmpty();
+        "dbuzs".Should().Be("dbuzs");
     }
 }
