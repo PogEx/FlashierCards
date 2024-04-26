@@ -1,0 +1,6 @@
+﻿services:
+  restapibackend:
+    image: restapibackend
+    build:
+      context: .
+      dockerfile: RestApiBackend/Dockerfile
