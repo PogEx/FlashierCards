@@ -1,6 +1,6 @@
 using Autofac;
-using Backend.Common.Contracts;
-using Backend.Common.IoC;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authorization;
 using RestApiBackend.IoC.Modules;
 
 namespace RestApiBackend;
@@ -9,18 +9,47 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        ContainerBuilder containerBuilder = new ();
-        
-        containerBuilder.SetupContainer(args);
-        containerBuilder.RegisterModule(new RestModule());
-        
-        IContainer container = containerBuilder.Build();
+        WebApplicationBuilder webApplicationBuilder = WebApplication.CreateBuilder(args);
 
-        foreach (IEndpointMapper mapper in container.Resolve<IEnumerable<IEndpointMapper>>())
+        webApplicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        webApplicationBuilder.Host.ConfigureContainer(
+            (HostBuilderContext context, ContainerBuilder builder) => 
+                SetupAutofacContainer(context, builder));
+
+        webApplicationBuilder.Services.AddAuthentication();
+        webApplicationBuilder.Services.AddAuthorization();
+        
+        webApplicationBuilder.Services
+            .AddControllers()
+            .AddControllersAsServices();
+
+        webApplicationBuilder.Services.AddSwaggerGen();
+        webApplicationBuilder.Services.AddEndpointsApiExplorer();
+        
+        WebApplication app = webApplicationBuilder.Build();
+        
+        app.UseRouting();
+        app.UseHttpsRedirection();
+        
+        if (app.Environment.IsDevelopment())
         {
-            mapper.MapEndpoint();
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            app.UseHsts();
         }
         
-        container.Resolve<WebApplication>().Run();
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.Run();
+    }
+
+    private static void SetupAutofacContainer(HostBuilderContext context, ContainerBuilder builder)
+    {
+        builder.RegisterModule(new RestModule());
     }
 }

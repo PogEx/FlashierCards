@@ -1,17 +1,27 @@
-﻿using Backend.Common.Contracts;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace RestApiBackend.Controllers;
 
-public class UserController: IEndpointMapper
+[Route("user")]
+[Controller]
+public class UserController: Controller
 {
-    private readonly IEndpointRouteBuilder _routeBuilder;
-
-    public UserController(IEndpointRouteBuilder routeBuilder)
+    
+    /// <summary>
+    /// This Creates a user
+    /// </summary>
+    /// <example>1234</example>>
+    /// <returns></returns>
+    [HttpPost("create")]
+    public IActionResult CreateUser()
     {
-        _routeBuilder = routeBuilder;
+        return Created();
     }
-    public void MapEndpoint()
+
+    [HttpPost("login")]
+    public IActionResult Login()
     {
-       
+        return Ok();
     }
 }
