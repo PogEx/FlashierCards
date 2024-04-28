@@ -1,10 +1,6 @@
-﻿using System.Security;
-using System.Security.Cryptography;
-using System.Web.Helpers;
+﻿using System.Web.Helpers;
 using Backend.Common.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Validations.Rules;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RestApiBackend.Controllers;
@@ -36,7 +32,11 @@ public class UserController: Controller
         return Created("", user);
     }
 
+    
     [HttpPost("login")]
+    [Consumes("application/x-www-form-urlencoded")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Login(
         [FromForm] string name, 
         [SwaggerSchema(Format = "password")][FromForm] string password)
