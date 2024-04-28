@@ -1,3 +1,3 @@
 ﻿namespace Backend.Common.Models;
 
-public record UserModel(string Name, string PwHash, string Salt);
+public record UserModel(Guid Guid, string Name, string PwHash, string Salt);

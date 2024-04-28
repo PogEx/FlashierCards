@@ -18,6 +18,8 @@
         <PackageReference Include="SqlKata" Version="3.0.0-beta" />
         <PackageReference Include="SqlKata.Execution" Version="3.0.0-beta" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+        <PackageReference Include="System.Web.Helpers.Crypto" Version="3.2.3" />
     </ItemGroup>
 
     <ItemGroup>

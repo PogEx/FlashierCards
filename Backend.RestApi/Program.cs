@@ -23,7 +23,7 @@ public class Program
             .AddControllers()
             .AddControllersAsServices();
 
-        webApplicationBuilder.Services.AddSwaggerGen();
+        webApplicationBuilder.Services.AddSwaggerGen(c => c.EnableAnnotations());
         webApplicationBuilder.Services.AddEndpointsApiExplorer();
         
         WebApplication app = webApplicationBuilder.Build();
