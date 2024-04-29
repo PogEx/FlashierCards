@@ -2,6 +2,7 @@
 on:
   workflow_run:
     workflows: ["dotnet"]
+    branches: [ "main", "develop", "feature/**" ]
     types:
       - completed
 
