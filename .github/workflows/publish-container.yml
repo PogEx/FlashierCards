@@ -1,10 +1,9 @@
 ﻿name: Publish RestApi docker container
 on:
-  push:
-    branches:
-      - main
-      - develop
-      - feature/**
+  workflow_run:
+    workflows: ["dotnet"]
+    types:
+      - completed
 
 env:
   REGISTRY: ghcr.io
