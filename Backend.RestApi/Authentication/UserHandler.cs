@@ -1,8 +1,8 @@
 ﻿using System.Web.Helpers;
 using Backend.Common.Models;
-using RestApiBackend.Contracts.Auth;
+using Backend.RestApi.Contracts.Auth;
 
-namespace RestApiBackend.Authentication;
+namespace Backend.RestApi.Authentication;
 
 public class UserHandler(ITokenManager tokenManager): IUserHandler
 {

@@ -1,4 +1,4 @@
-﻿namespace RestApiBackend.Contracts.Auth;
+﻿namespace Backend.RestApi.Contracts.Auth;
 
 public interface IUserHandler
 {

@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using RestApiBackend.Authentication;
-using RestApiBackend.Contracts.Auth;
+using Backend.RestApi.Authentication;
+using Backend.RestApi.Contracts.Auth;
 
-namespace RestApiBackend.IoC.Modules;
+namespace Backend.RestApi.IoC.Modules;
 
 public class AuthModule: Module
 {

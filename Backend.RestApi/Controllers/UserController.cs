@@ -1,14 +1,11 @@
-using System.Security;
-using System.Web.Helpers;
-using Backend.Common.Models;
 using Backend.Common.Models.Auth;
+using Backend.RestApi.Contracts.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using RestApiBackend.Contracts.Auth;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace RestApiBackend.Controllers;
+namespace Backend.RestApi.Controllers;
 
 [Route("user")]
 [Controller]

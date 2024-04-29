@@ -1,14 +1,12 @@
 using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Backend.RestApi.IoC.Modules;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using RestApiBackend.IoC.Modules;
 
-namespace RestApiBackend;
+namespace Backend.RestApi;
 
 public class Program
 {

@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6306DF9D-6E28-49DA-8440-C2D7F1528175}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestApiBackend.Test", "RestApiBackend.Test\RestApiBackend.Test.csproj", "{AB6E0C4A-57DD-4930-ABE2-11F3055A0CCC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.RestApi.Test", "Backend.RestApi.Test\Backend.RestApi.Test.csproj", "{AB6E0C4A-57DD-4930-ABE2-11F3055A0CCC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Common", "Backend.Common\Backend.Common.csproj", "{2ACB2426-EF6C-463A-8CB8-7D31C96A9007}"
 EndProject

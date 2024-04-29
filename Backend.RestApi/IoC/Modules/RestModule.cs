@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace RestApiBackend.IoC.Modules;
+namespace Backend.RestApi.IoC.Modules;
 
 public class RestModule: Module
 {

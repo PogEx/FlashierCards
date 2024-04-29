@@ -7,17 +7,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Debug
 WORKDIR /src
-COPY ["RestApiBackend/RestApiBackend.csproj", "RestApiBackend/"]
-RUN dotnet restore "RestApiBackend/RestApiBackend.csproj"
+COPY ["Backend.RestApi/Backend.RestApi.csproj", "Backend.RestApi/"]
+RUN dotnet restore "Backend.RestApi/Backend.RestApi.csproj"
 COPY . .
 WORKDIR "/src/RestApiBackend"
-RUN dotnet build "RestApiBackend.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "Backend.RestApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Debug
-RUN dotnet publish "RestApiBackend.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Backend.RestApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "RestApiBackend.dll"]
+ENTRYPOINT ["dotnet", "Backend.RestApi.dll"]

@@ -1,4 +1,4 @@
-namespace RestApiBackend.Test;
+namespace Backend.RestApi.Test;
 
 public class Tests
 {
