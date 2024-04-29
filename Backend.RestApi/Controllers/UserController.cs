@@ -12,7 +12,6 @@ namespace Backend.RestApi.Controllers;
 public class UserController (IUserHandler userHandler) : Controller
 {
     [HttpPost("create")]
-    [Consumes("application/x-www-form-urlencoded")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult CreateUser(
@@ -33,7 +32,6 @@ public class UserController (IUserHandler userHandler) : Controller
     }
 
     [HttpPost("login")]
-    [Consumes("application/x-www-form-urlencoded")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
