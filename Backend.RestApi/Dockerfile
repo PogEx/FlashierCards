@@ -10,7 +10,8 @@ WORKDIR /src
 COPY ["Backend.RestApi/Backend.RestApi.csproj", "Backend.RestApi/"]
 RUN dotnet restore "Backend.RestApi/Backend.RestApi.csproj"
 COPY . .
-WORKDIR "/src/RestApiBackend"
+
+WORKDIR "/src/Backend.RestApi"
 RUN dotnet build "Backend.RestApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
