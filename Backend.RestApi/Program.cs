@@ -1,6 +1,11 @@
+using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using RestApiBackend.IoC.Modules;
 
 namespace RestApiBackend;
@@ -16,14 +21,59 @@ public class Program
             (HostBuilderContext context, ContainerBuilder builder) => 
                 SetupAutofacContainer(context, builder));
 
-        webApplicationBuilder.Services.AddAuthentication();
+        webApplicationBuilder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            var key = webApplicationBuilder.Configuration.GetSection("Jwt").GetValue<string>("SigningKey");
+            var keyByte = Encoding.ASCII.GetBytes(key);
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                IssuerSigningKey = new SymmetricSecurityKey(keyByte),
+                ValidateLifetime = true,
+                ValidateAudience = true,
+                ValidateIssuer = true
+            };
+        });
         webApplicationBuilder.Services.AddAuthorization();
         
         webApplicationBuilder.Services
             .AddControllers()
             .AddControllersAsServices();
 
-        webApplicationBuilder.Services.AddSwaggerGen(c => c.EnableAnnotations());
+        webApplicationBuilder.Services.AddSwaggerGen(c =>
+        {
+            c.EnableAnnotations();
+            c.SwaggerDoc("v1", new OpenApiInfo{ Title = "Flashier Cards Api", Version = "v1" });
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = @"",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+
+                    },
+                    new List<string>()
+                }
+            });
+        });
         webApplicationBuilder.Services.AddEndpointsApiExplorer();
         
         WebApplication app = webApplicationBuilder.Build();
