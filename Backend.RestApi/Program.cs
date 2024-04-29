@@ -83,10 +83,11 @@ public class Program
         {
             app.UseDeveloperExceptionPage();
             app.UseHsts();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
         
-        app.UseSwagger();
-        app.UseSwaggerUI();
+
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
