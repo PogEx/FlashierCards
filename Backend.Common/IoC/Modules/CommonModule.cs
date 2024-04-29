@@ -1,22 +1,22 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using RestApiBackend.Contracts;
-using RestApiBackend.Controllers;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-namespace RestApiBackend.IoC.Modules
+namespace Backend.Common.IoC.Modules
 {
-    public class DefaultModule: Module
+    public class CommonModule(string[] args): Module
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<HtmlController>().As<IEndpointMapper>();
-
             AddWebApp(builder);
         }
 
-        private static void AddWebApp(ContainerBuilder builder)
+        private void AddWebApp(ContainerBuilder builder)
         {
-            WebApplicationBuilder webApplicationBuilder = WebApplication.CreateBuilder();
+            WebApplicationBuilder webApplicationBuilder = WebApplication.CreateBuilder(args);
 
             webApplicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 

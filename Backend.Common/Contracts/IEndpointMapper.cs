@@ -1,4 +1,4 @@
-﻿namespace RestApiBackend.Contracts;
+﻿namespace Backend.Common.Contracts;
 
 public interface IEndpointMapper
 {

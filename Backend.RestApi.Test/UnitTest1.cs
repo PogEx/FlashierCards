@@ -1,6 +1,4 @@
-using FluentAssertions;
-
-namespace RestApiBackend.Test;
+namespace Backend.RestApi.Test;
 
 public class Tests
 {
@@ -12,6 +10,6 @@ public class Tests
     [Test]
     public void Test1()
     {
-        "dbuzs".Should().Be("dbuzs");
+        Assert.Pass();
     }
 }

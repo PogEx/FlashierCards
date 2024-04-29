@@ -1,6 +1,6 @@
-﻿using RestApiBackend.Contracts;
+﻿using Backend.Common.Contracts;
 
-namespace RestApiBackend.Controllers;
+namespace Backend.Html.Controllers;
 
 public class HtmlController: IEndpointMapper
 {
