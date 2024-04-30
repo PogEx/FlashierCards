@@ -1,6 +1,6 @@
 ﻿services:
   restapibackend:
-    image: ghcr.io/pogex/flashiercards:develop-rest
+    image: ghcr.io/pogex/flashiercards-rest:develop
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -13,7 +13,7 @@
       - backend-data-store:/app/data
 
   backend.html:
-    image: ghcr.io/pogex/flashiercards:develop-html
+    image: ghcr.io/pogex/flashiercards-html:develop
     ports:
       - "8082:8080"
       - "8083:8081"
