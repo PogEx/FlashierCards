@@ -1,5 +1,5 @@
 ﻿services:
-  restapibackend:
+  backend.restapi:
     image: ghcr.io/pogex/flashiercards:develop-rest
     ports:
       - "8080:8080"
@@ -11,6 +11,8 @@
       - "database"
     volumes:
       - backend-data-store:/app/data
+    depends_on:
+      - db
 
   backend.html:
     image: ghcr.io/pogex/flashiercards:develop-html
@@ -21,6 +23,8 @@
       ASPNETCORE_ENVIRONMENT: "Development"
     networks:
       - "frontend"
+    depends_on:
+      - backend.restapi
     
   db:
     image: mysql:latest
@@ -34,6 +38,7 @@
       - "database"
     volumes:
       - db-data:/etc/data
+      - db-config:/var/lib/mysql
   
 networks:
   frontend: {}
@@ -41,5 +46,6 @@ networks:
   
 volumes:
   db-data:
+  db-config:
   backend-data-store:
   
