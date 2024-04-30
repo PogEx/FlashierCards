@@ -29,11 +29,6 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
           
-      - name: Login to descus.de
-        uses: docker/login-action@v3
-        with:
-          registry: ${{env.PRIVATE_REGISTRY}}
-          
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
