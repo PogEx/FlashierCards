@@ -30,7 +30,7 @@
     image: mysql:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: flashiercards
     ports:
       - "8079:3306"
