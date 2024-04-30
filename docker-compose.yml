@@ -1,12 +1,43 @@
 ﻿services:
   restapibackend:
-    image: restapibackend
-    build:
-      context: .
-      dockerfile: RestApiBackend/Dockerfile
+    image: ghcr.io/pogex/flashiercards:develop-rest
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT: "Development"
+    networks:
+      - "frontend"
+      - "database"
+    volumes:
+      - backend-data-store:/app/data
 
   backend.html:
-    image: backend.html
-    build:
-      context: .
-      dockerfile: Backend.Html/Dockerfile
+    image: ghcr.io/pogex/flashiercards:develop-html
+    ports:
+      - "8082:8080"
+      - "8083:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT: "Development"
+    networks:
+      - "frontend"
+    
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: flashiercards
+    networks:
+      - "database"
+    volumes:
+      - db-data:/etc/data
+  
+networks:
+  frontend: {}
+  database: {}
+  
+volumes:
+  db-data:
+  backend-data-store:
+  
