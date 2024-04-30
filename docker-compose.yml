@@ -28,6 +28,8 @@
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: flashiercards
+    ports:
+      - "8079:3306"
     networks:
       - "database"
     volumes:
