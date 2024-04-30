@@ -39,7 +39,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-rest"
+          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
           
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -47,7 +47,7 @@ jobs:
           context: .
           file: Backend.RestApi/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}-rest
           labels: ${{ steps.meta.outputs.labels }}
           
   build-and-push-html:
@@ -72,7 +72,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-html"
+          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -80,5 +80,5 @@ jobs:
           context: .
           file: Backend.Html/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}-html
           labels: ${{ steps.meta.outputs.labels }}
