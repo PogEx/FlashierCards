@@ -7,8 +7,7 @@ on:
 
 
 env:
-  GIT_REGISTRY: ghcr.io
-  PRIVATE_REGISTRY: dockerreg.descus.de
+  REGISTRY: ghcr.io
   IMAGE_NAME: ${{github.repository}}
 
 jobs:
