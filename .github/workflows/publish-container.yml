@@ -40,8 +40,8 @@ jobs:
           context: .
           file: Backend.RestApi/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}.rest
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}-rest
           
   build-and-push-html:
     runs-on: ubuntu-latest
@@ -72,5 +72,5 @@ jobs:
           context: .
           file: Backend.Html/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}.html
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}-html
