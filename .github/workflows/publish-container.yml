@@ -53,6 +53,6 @@ jobs:
       - build-and-push
     steps:
       - name: send status
-        uses: numberoverzero/rook-action@v1
+        uses: newarifrh/portainer-service-webhook@v1
         with:
-          endpoint: ${{ secrets.WEBHOOK}}   
+          webhook_url: ${{ secrets.WEBHOOK }}
