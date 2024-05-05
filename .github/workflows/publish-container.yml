@@ -46,13 +46,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          
-  call-webhook:
-    runs-on: "ubuntu-latest"
-    needs: 
-      - build-and-push
-    steps:
-      - name: send status
-        uses: newarifrh/portainer-service-webhook@v1
-        with:
-          webhook_url: ${{ secrets.WEBHOOK }}
+        
