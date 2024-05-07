@@ -1,6 +1,8 @@
-﻿namespace Backend.RestApi.Contracts.Auth;
+﻿using Backend.Common.Models.Auth;
+
+namespace Backend.RestApi.Contracts.Auth;
 
 public interface ITokenManager
 {
-    string Authenticate(string user, string password);
+    TokenLease GenerateTokenFor(Guid guid, string user);
 }

@@ -8,7 +8,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Backend.RestApi;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {
@@ -17,7 +17,7 @@ public class Program
         webApplicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         webApplicationBuilder.Host.ConfigureContainer(
             (HostBuilderContext context, ContainerBuilder builder) => 
-                SetupAutofacContainer(context, builder));
+                SetupAutofacContainer(context, builder, webApplicationBuilder.Configuration));
 
         webApplicationBuilder.Services.AddAuthentication(options =>
         {
@@ -25,11 +25,13 @@ public class Program
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
         {
-            var key = webApplicationBuilder.Configuration.GetSection("Jwt").GetValue<string>("SigningKey");
-            var keyByte = Encoding.ASCII.GetBytes(key);
+            IConfigurationSection jwtSection = webApplicationBuilder.Configuration.GetSection("Jwt");
+            byte[] keyByte = Encoding.ASCII.GetBytes(jwtSection.GetValue<string>("Key") ?? "");
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 IssuerSigningKey = new SymmetricSecurityKey(keyByte),
+                ValidIssuer = jwtSection.GetValue<string>("Issuer"),
+                ValidAudience = jwtSection.GetValue<string>("Audience"),
                 ValidateLifetime = true,
                 ValidateAudience = true,
                 ValidateIssuer = true
@@ -45,31 +47,25 @@ public class Program
         {
             c.EnableAnnotations();
             c.SwaggerDoc("v1", new OpenApiInfo{ Title = "Flashier Cards Api", Version = "v1" });
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Description = @"",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+                In = ParameterLocation.Header, 
+                Description = "Please insert JWT with Bearer into field",
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                Type = SecuritySchemeType.Http 
             });
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                { 
+                    new OpenApiSecurityScheme 
+                    { 
+                        Reference = new OpenApiReference 
+                        { 
                             Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        },
-                        Scheme = "oauth2",
-                        Name = "Bearer",
-                        In = ParameterLocation.Header,
-
+                            Id = "Bearer" 
+                        } 
                     },
-                    new List<string>()
-                }
+                    new string[] { } 
+                } 
             });
         });
         webApplicationBuilder.Services.AddEndpointsApiExplorer();
@@ -97,8 +93,8 @@ public class Program
         app.Run();
     }
 
-    private static void SetupAutofacContainer(HostBuilderContext context, ContainerBuilder builder)
+    private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder, IConfiguration configuration)
     {
-        builder.RegisterModule(new RestModule());
+        builder.RegisterModule(new RestModule(configuration));
     }
 }
