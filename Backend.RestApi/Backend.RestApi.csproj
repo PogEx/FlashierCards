@@ -35,10 +35,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Configurations\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Compile Remove="Configurations\DatabaseConfiguration.cs" />
     </ItemGroup>
 

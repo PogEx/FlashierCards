@@ -10,7 +10,8 @@
       - "frontend"
       - "database"
     volumes:
-      - backend-data-store:/app/data
+      - rest-backend-data-store:/app/data
+      - rest-backend-app:/app
     depends_on:
       - db
 
@@ -23,6 +24,8 @@
       ASPNETCORE_ENVIRONMENT: "Development"
     networks:
       - "frontend"
+    volumes:
+      - html-backend-app:/app
     depends_on:
       - backend.restapi
     
@@ -47,5 +50,7 @@ networks:
 volumes:
   db-data:
   db-config:
-  backend-data-store:
+  rest-backend-data-store:
+  rest-backend-app:
+  html-backend-app:
   
