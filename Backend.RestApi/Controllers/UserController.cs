@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Backend.Common.Models;
 using Backend.Common.Models.Auth;
 using Backend.RestApi.Contracts.Auth;
 using Microsoft.AspNetCore.Authorization;
@@ -9,9 +11,11 @@ namespace Backend.RestApi.Controllers;
 
 [Route("user")]
 [Controller]
+[Authorize]
 public class UserController (IUserHandler userHandler) : Controller
 {
     [HttpPost("create")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult CreateUser(
@@ -32,6 +36,7 @@ public class UserController (IUserHandler userHandler) : Controller
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -46,31 +51,31 @@ public class UserController (IUserHandler userHandler) : Controller
             || string.IsNullOrEmpty(password))
             return BadRequest();
         
-        Guid? userGuid = userHandler.GetUser(name);
+        User? user = userHandler.GetUser(name);
         
-        if (userGuid is null)
+        if (user is null)
             return NotFound();
         
-        string? bearer = userHandler.Login(userGuid.Value, password);
+        TokenLease? bearer = userHandler.Login(user.Guid, password);
         
         if (bearer is null)
             return Unauthorized();
         
-        return Ok(new TokenLease(
-            bearer,
-            DateTime.Now.AddHours(24)));
+        return Ok(bearer);
     }
 
     [HttpGet]
-    [Authorize]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public IActionResult Get(
-        [FromQuery] Guid id
-    )
+    public IActionResult Get()
     {
-        userHandler.GetName(id);
-        return NotFound();
+        return Ok(userHandler.GetUser(new Guid(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value)));
+    }
+
+    [HttpPatch]
+    public IActionResult ChangeUserData()
+    {
+        return Ok();
     }
 }
