@@ -1,10 +1,7 @@
 ﻿using System.Data;
 using Autofac;
-using Backend.RestApi.Configurations;
 using Backend.RestApi.TypeHandlers;
 using Dapper;
-using Dapper.SimpleSqlBuilder;
-using Microsoft.Data.SqlClient;
 using MySql.Data.MySqlClient;
 
 namespace Backend.RestApi.IoC.Modules;
