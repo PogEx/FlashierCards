@@ -1,33 +1,48 @@
-﻿using System.Web.Helpers;
+﻿using System.Data;
+using System.Web.Helpers;
 using Backend.Common.Models;
+using Backend.Common.Models.Auth;
 using Backend.RestApi.Contracts.Auth;
+using Dapper;
+using Dapper.SimpleSqlBuilder;
+using Dapper.SimpleSqlBuilder.FluentBuilder;
 
 namespace Backend.RestApi.Authentication;
 
-public class UserHandler(ITokenManager tokenManager): IUserHandler
+public class UserHandler(ITokenManager tokenManager, IDbConnection connection) : IUserHandler
 {
     public Guid? CreateUser(string name, string password)
     {
+        if (GetUser(name) is not null)
+            return null;
+        
         string salt = Crypto.GenerateSalt();
         string hashedPassword = Crypto.HashPassword(salt + password);
-            
+        
         Guid userGuid = Guid.NewGuid();
-        User user = new(userGuid, name, hashedPassword, salt);
-        
-        //save to database
-        
+        User user = new(userGuid.ToString(), name, hashedPassword, salt);
+
+        IFluentSqlBuilder builder = SimpleBuilder.CreateFluent()
+            .InsertInto($"user")
+            .Columns($"guid, name, pwHash, salt")
+            .Values($"{user.Guid}, {user.Name}, {user.PwHash}, {user.Salt}");
+
+        connection.Execute(builder.Sql, builder.Parameters);
         return userGuid;
     }
 
-    public string Login(Guid user, string password)
+    public TokenLease? Login(Guid user, string password)
     {
-        //TODO
-        //check if user exists here
-        //Get Entry from database
-        //prepend salt to pw
-        //Hash Password
-        //Compare Password Hash
-        return tokenManager.Authenticate(GetName(user), password);
+        Builder sql = SimpleBuilder.Create($"SELECT guid, name, pwHash, salt from user WHERE guid = {user.ToString()}");
+        User? result = connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
+        
+        if (result is null)
+            return null;
+        
+        if (!Crypto.VerifyHashedPassword(result.PwHash, result.Salt + password)) 
+            return null;
+        
+        return tokenManager.GenerateTokenFor(result.Guid, result.Name);
     }
 
     public void Logout(Guid user)
@@ -36,20 +51,15 @@ public class UserHandler(ITokenManager tokenManager): IUserHandler
         //invalidate current token for user
     }
 
-    public Guid? GetUser(string name)
+    public User? GetUser(string name)
     {
-        //TODO
-        //Ask database for user existance
-        //return guid of user
-
-        return new Guid();
+        Builder sql = SimpleBuilder.Create($"SELECT guid, name from user WHERE name = {name} LIMIT 1");
+        return connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
     }
 
-    public string GetName(Guid guid)
+    public User? GetUser(Guid guid)
     {
-        //TODO
-        //Get username of guid
-        //return users name
-        return "";
+        Builder sql = SimpleBuilder.Create($"SELECT guid, name from user WHERE guid = {guid.ToString()} LIMIT 1");
+        return connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
     }
 }

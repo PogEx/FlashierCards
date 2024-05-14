@@ -11,12 +11,16 @@ env:
   IMAGE_NAME: ${{github.repository}}
 
 jobs:
-  build-and-push-rest:
+  build-and-push:
     runs-on: ubuntu-latest
     
     permissions:
       contents: read
       packages: write
+      
+    strategy:
+      matrix: 
+        projects: ["Backend.RestApi", "Backend.Html"]
     
     steps:
       - uses: actions/checkout@v4
@@ -32,45 +36,14 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
-          
-      - name: Build and push Docker image
+          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{matrix.projects}}"
+
+      - name: Build and push Docker image ${{matrix.projects}}
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Backend.RestApi/Dockerfile
+          file: ${{matrix.projects}}/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}-rest
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          
-  build-and-push-html:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Login to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{env.REGISTRY}}
-          username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: Backend.Html/Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}-html
-          labels: ${{ steps.meta.outputs.labels }}
+        

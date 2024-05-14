@@ -1,11 +1,13 @@
-﻿namespace Backend.RestApi.Contracts.Auth;
+﻿using Backend.Common.Models;
+using Backend.Common.Models.Auth;
+
+namespace Backend.RestApi.Contracts.Auth;
 
 public interface IUserHandler
 {
     Guid? CreateUser(string name, string password);
-    string? Login(Guid user, string password);
+    TokenLease? Login(Guid user, string password);
     void Logout(Guid user);
-    Guid? GetUser(string name);
-
-    string GetName(Guid guid);
+    User? GetUser(string name);
+    User? GetUser(Guid guid);
 }
