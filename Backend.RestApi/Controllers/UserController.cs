@@ -56,7 +56,7 @@ public class UserController (IUserHandler userHandler) : Controller
         if (user is null)
             return NotFound();
         
-        TokenLease? bearer = userHandler.Login(user.Guid, password);
+        string? bearer = userHandler.Login(user.Guid, password);
         
         if (bearer is null)
             return Unauthorized();

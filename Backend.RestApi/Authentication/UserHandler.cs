@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Web.Helpers;
-using Backend.Common.Models;
-using Backend.Common.Models.Auth;
+using Backend.Common.Models.User;
 using Backend.RestApi.Contracts.Auth;
 using Dapper;
 using Dapper.SimpleSqlBuilder;
@@ -31,7 +30,7 @@ public class UserHandler(ITokenManager tokenManager, IDbConnection connection) :
         return userGuid;
     }
 
-    public TokenLease? Login(Guid user, string password)
+    public string? Login(Guid user, string password)
     {
         Builder sql = SimpleBuilder.Create($"SELECT guid, name, pwHash, salt from user WHERE guid = {user.ToString()}");
         User? result = connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
