@@ -10,6 +10,42 @@ namespace Backend.RestApi.Controllers;
 [Authorize]
 public class FolderController : Controller
 {
+    [HttpGet]
+    public IActionResult GetFolder(
+        [FromQuery(Name = "id")] Guid? id
+        )
+    {
+        if (id is null) return GetUserRoot();
+        
+        
+        return Ok();
+    }
+    
+    [HttpPost]
+    public IActionResult CreateFolder(
+        [FromBody, BindRequired] FolderCreateData data
+        )
+    {
+        return Ok();
+    }
+    
+    [HttpPatch]
+    public IActionResult ChangeFolder(
+        [FromQuery(Name = "id"), BindRequired] Guid id,
+        [FromBody, BindRequired] FolderChangeData data
+        )
+    {
+        return Ok();
+    }
+    
+    [HttpDelete]
+    public IActionResult DeleteFolder(
+        [FromQuery(Name = "id"), BindRequired] Guid id
+        )
+    {
+        return Ok();
+    }
+    
     [HttpGet("userroot")]
     public IActionResult GetUserRoot()
     {
@@ -17,34 +53,9 @@ public class FolderController : Controller
     }
 
     [HttpGet("parent")]
-    public IActionResult GetParent([FromQuery, BindRequired] Guid guid)
-    {
-        return Ok();
-    }
-    
-    [HttpPost]
-    public IActionResult CreateFolder(
-        [FromBody, BindRequired] FolderCreateData createData)
-    {
-        return Ok();
-    }
-
-    [HttpGet]
-    public IActionResult GetFolder([FromQuery] Guid folderId)
-    {
-        return Ok();
-    }
-    
-    [HttpPatch]
-    public IActionResult ChangeFolder(
-        [FromQuery] Guid folderId,
-        [FromBody] FolderChangeData changeData)
-    {
-        return Ok();
-    }
-    
-    [HttpDelete]
-    public IActionResult DeleteFolder([FromQuery] Guid folderId)
+    public IActionResult GetParent(
+        [FromQuery(Name = "id"), BindRequired] Guid guid
+        )
     {
         return Ok();
     }

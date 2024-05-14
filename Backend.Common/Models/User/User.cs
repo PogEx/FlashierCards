@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Backend.Common.Models;
+﻿namespace Backend.Common.Models.User;
 
 public class User
 {
@@ -14,16 +12,20 @@ public class User
     
     public User(string guid, string name, string pwHash, string salt)
     {
-        Guid = Guid.Parse(guid);
+        Guid = System.Guid.Parse(guid);
         Name = name;
         PwHash = pwHash;
         Salt = salt;
     }
     
-    public User(){}
-
+    public User(string guid, string name)
+    {
+        Guid = System.Guid.Parse(guid);
+        Name = name;
+    }
+    
     public Guid Guid { get; set; }
     public string Name { get; set; }
-    public string PwHash { get; set; }
-    public string Salt { get; set; }
+    public string? PwHash { get; set; }
+    public string? Salt { get; set; }
 }
