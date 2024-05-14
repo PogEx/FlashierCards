@@ -32,7 +32,7 @@ public class UserHandler(ITokenManager tokenManager, IDbConnection connection) :
 
     public string? Login(Guid user, string password)
     {
-        Builder sql = SimpleBuilder.Create($"SELECT guid, name, pwHash, salt from user WHERE guid = {user.ToString()}");
+        Builder sql = SimpleBuilder.Create($"SELECT user_id, name, password_hash, salt from user WHERE user_id = {user.ToString()}");
         User? result = connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
         
         if (result is null)
@@ -52,13 +52,13 @@ public class UserHandler(ITokenManager tokenManager, IDbConnection connection) :
 
     public User? GetUser(string name)
     {
-        Builder sql = SimpleBuilder.Create($"SELECT guid, name from user WHERE name = {name} LIMIT 1");
+        Builder sql = SimpleBuilder.Create($"SELECT user_id, name from user WHERE name = {name} LIMIT 1");
         return connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
     }
 
     public User? GetUser(Guid guid)
     {
-        Builder sql = SimpleBuilder.Create($"SELECT guid, name from user WHERE guid = {guid.ToString()} LIMIT 1");
+        Builder sql = SimpleBuilder.Create($"SELECT user_id, name from user WHERE user_id = {guid.ToString()} LIMIT 1");
         return connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
     }
 }
