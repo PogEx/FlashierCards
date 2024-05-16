@@ -1,6 +1,6 @@
 ﻿services:
   backend.restapi:
-    image: ghcr.io/pogex/flashiercards:develop-rest
+    image: ghcr.io/pogex/flashiercards-backend.restapi:develop
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -17,7 +17,7 @@
       - db
 
   backend.html:
-    image: ghcr.io/pogex/flashiercards:develop-html
+    image: ghcr.io/pogex/flashiercards-backend.html:develop
     restart: unless-stopped
     ports:
       - "8082:8080"
