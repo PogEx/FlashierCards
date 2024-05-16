@@ -34,6 +34,8 @@
   db:
     image: mysql:latest
     restart: unless-stopped
+    stdin_open: true
+    tty: true
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: flashiercards
