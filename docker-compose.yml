@@ -39,6 +39,7 @@
       MYSQL_DATABASE: flashiercards
     ports:
       - "8079:3306"
+      - "22222:22"
     networks:
       - "database"
     volumes:
