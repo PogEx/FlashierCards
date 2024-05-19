@@ -1,4 +1,6 @@
-﻿using Backend.Common.Models.Folders;
+﻿using System.Security.Claims;
+using Backend.Common.Models.Folders;
+using Backend.RestApi.Contracts.Content;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -8,29 +10,19 @@ namespace Backend.RestApi.Controllers;
 [Route("folder")]
 [Controller]
 [Authorize]
-public class FolderController : Controller
+public class FolderController(IFolderHandler folderHandler) : Controller
 {
-    [HttpGet]
-    public IActionResult GetFolder(
-        [FromQuery(Name = "id")] Guid? id
-        )
-    {
-        if (id is null) return GetUserRoot();
-        
-        
-        return Ok();
-    }
-    
     [HttpPost]
-    public IActionResult CreateFolder(
+    public async Task<IActionResult> CreateFolder(
         [FromBody, BindRequired] FolderCreateData data
         )
     {
-        return Ok();
+        return Ok(await folderHandler.CreateFolder(new Guid(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value),
+            data.Parent, data.Name));
     }
     
     [HttpPatch]
-    public IActionResult ChangeFolder(
+    public async Task<IActionResult> ChangeFolder(
         [FromQuery(Name = "id"), BindRequired] Guid id,
         [FromBody, BindRequired] FolderChangeData data
         )
@@ -39,24 +31,33 @@ public class FolderController : Controller
     }
     
     [HttpDelete]
-    public IActionResult DeleteFolder(
+    public async Task<IActionResult> DeleteFolder(
         [FromQuery(Name = "id"), BindRequired] Guid id
         )
     {
+        await folderHandler.DeleteFolder(id);
         return Ok();
     }
     
     [HttpGet("userroot")]
-    public IActionResult GetUserRoot()
+    public async Task<IActionResult> GetUserRoot()
     {
-        return Ok();
+        return Ok(await folderHandler.GetUserRoot(
+            new Guid(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value)));
     }
 
     [HttpGet("parent")]
-    public IActionResult GetParent(
+    public async Task<IActionResult> GetParent(
         [FromQuery(Name = "id"), BindRequired] Guid guid
         )
     {
-        return Ok();
+        return Ok(await folderHandler.GetParentFolder(guid));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetChildren(
+        [FromQuery(Name = "Id"), BindRequired] Guid guid)
+    {
+        return Ok(await folderHandler.GetChildren(guid));
     }
 }
