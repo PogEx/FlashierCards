@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Backend.Common.Models.User;
 using Backend.RestApi.Contracts.Auth;
+using Backend.RestApi.Contracts.Content;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -11,7 +12,7 @@ namespace Backend.RestApi.Controllers;
 [Route("user")]
 [Controller]
 [Authorize]
-public class UserController (IUserHandler userHandler) : Controller
+public class UserController (IUserHandler userHandler, IFolderHandler folderHandler) : Controller
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -45,8 +46,13 @@ public class UserController (IUserHandler userHandler) : Controller
             return BadRequest();
         
         Guid? guid = userHandler.CreateUser(name, password);
+        if (guid is null)
+        {
+            return Problem();
+        }
+        folderHandler.CreateUserRoot(guid.Value);
 
-        return guid is null ? Problem() : Created("", guid);
+        return Created("", guid);
     }
 
     [HttpPost("login")]
@@ -70,7 +76,7 @@ public class UserController (IUserHandler userHandler) : Controller
         if (user is null)
             return NotFound();
         
-        string? bearer = userHandler.Login(user.Guid, password);
+        string? bearer = userHandler.Login(user.Id, password);
         
         if (bearer is null)
             return Unauthorized();
