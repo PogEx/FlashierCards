@@ -8,5 +8,6 @@ public class RestModule(IConfiguration configuration): Module
     {
         builder.RegisterModule(new AuthModule());
         builder.RegisterModule(new DbModule(configuration));
+        builder.RegisterModule(new ContentModule());
     }
 }
