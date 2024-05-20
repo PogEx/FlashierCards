@@ -37,6 +37,8 @@
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: flashiercards
+    tty: true
+    stdin_open: true
     ports:
       - "8079:3306"
     networks:

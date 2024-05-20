@@ -1,11 +1,9 @@
 ﻿using System.Data;
 using System.Web.Helpers;
-using Backend.Common.Models;
-using Backend.Common.Models.Auth;
+using Backend.Common.Models.User;
 using Backend.RestApi.Contracts.Auth;
 using Dapper;
 using Dapper.SimpleSqlBuilder;
-using Dapper.SimpleSqlBuilder.FluentBuilder;
 
 namespace Backend.RestApi.Authentication;
 
@@ -20,29 +18,25 @@ public class UserHandler(ITokenManager tokenManager, IDbConnection connection) :
         string hashedPassword = Crypto.HashPassword(salt + password);
         
         Guid userGuid = Guid.NewGuid();
-        User user = new(userGuid.ToString(), name, hashedPassword, salt);
+        User user = new(){Id = userGuid, Name = name, PasswordHash = hashedPassword, Salt = salt};
 
-        IFluentSqlBuilder builder = SimpleBuilder.CreateFluent()
-            .InsertInto($"user")
-            .Columns($"guid, name, pwHash, salt")
-            .Values($"{user.Guid}, {user.Name}, {user.PwHash}, {user.Salt}");
-
+        Builder builder = SimpleBuilder.Create($"INSERT INTO user(user_id, name, password_hash, salt) VALUES ({user.Id}, {user.Name}, {user.PasswordHash}, {user.Salt})");
         connection.Execute(builder.Sql, builder.Parameters);
         return userGuid;
     }
 
-    public TokenLease? Login(Guid user, string password)
+    public string? Login(Guid user, string password)
     {
-        Builder sql = SimpleBuilder.Create($"SELECT guid, name, pwHash, salt from user WHERE guid = {user.ToString()}");
+        Builder sql = SimpleBuilder.Create($"SELECT user_id as Id, name as Name, password_hash as PasswordHash, salt as Salt from user WHERE user_id = {user.ToString()}");
         User? result = connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
         
         if (result is null)
             return null;
         
-        if (!Crypto.VerifyHashedPassword(result.PwHash, result.Salt + password)) 
+        if (!Crypto.VerifyHashedPassword(result.PasswordHash, result.Salt + password)) 
             return null;
         
-        return tokenManager.GenerateTokenFor(result.Guid, result.Name);
+        return tokenManager.GenerateTokenFor(result.Id, result.Name);
     }
 
     public void Logout(Guid user)
@@ -53,13 +47,13 @@ public class UserHandler(ITokenManager tokenManager, IDbConnection connection) :
 
     public User? GetUser(string name)
     {
-        Builder sql = SimpleBuilder.Create($"SELECT guid, name from user WHERE name = {name} LIMIT 1");
+        Builder sql = SimpleBuilder.Create($"SELECT user_id as Id, name from user WHERE name = {name} LIMIT 1");
         return connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
     }
 
     public User? GetUser(Guid guid)
     {
-        Builder sql = SimpleBuilder.Create($"SELECT guid, name from user WHERE guid = {guid.ToString()} LIMIT 1");
+        Builder sql = SimpleBuilder.Create($"SELECT user_id as Id, name from user WHERE user_id = {guid} LIMIT 1");
         return connection.QueryFirstOrDefault<User>(sql.Sql, sql.Parameters);
     }
 }

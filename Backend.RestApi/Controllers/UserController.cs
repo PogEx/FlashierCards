@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using Backend.Common.Models;
-using Backend.Common.Models.Auth;
+using Backend.Common.Models.User;
 using Backend.RestApi.Contracts.Auth;
+using Backend.RestApi.Contracts.Content;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -12,9 +12,24 @@ namespace Backend.RestApi.Controllers;
 [Route("user")]
 [Controller]
 [Authorize]
-public class UserController (IUserHandler userHandler) : Controller
+public class UserController (IUserHandler userHandler, IFolderHandler folderHandler) : Controller
 {
-    [HttpPost("create")]
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [SwaggerResponse(200, null, typeof(User))]
+    public IActionResult Get()
+    {
+        return Ok(userHandler.GetUser(new Guid(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value)));
+    }
+
+    [HttpPatch]
+    public IActionResult ChangeUserData()
+    {
+        return Ok();
+    }
+    [HttpPost]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -31,8 +46,13 @@ public class UserController (IUserHandler userHandler) : Controller
             return BadRequest();
         
         Guid? guid = userHandler.CreateUser(name, password);
+        if (guid is null)
+        {
+            return Problem();
+        }
+        folderHandler.CreateUserRoot(guid.Value);
 
-        return guid is null ? Problem() : Created("", guid);
+        return Created("", guid);
     }
 
     [HttpPost("login")]
@@ -56,26 +76,11 @@ public class UserController (IUserHandler userHandler) : Controller
         if (user is null)
             return NotFound();
         
-        TokenLease? bearer = userHandler.Login(user.Guid, password);
+        string? bearer = userHandler.Login(user.Id, password);
         
         if (bearer is null)
             return Unauthorized();
         
         return Ok(bearer);
-    }
-
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public IActionResult Get()
-    {
-        return Ok(userHandler.GetUser(new Guid(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value)));
-    }
-
-    [HttpPatch]
-    public IActionResult ChangeUserData()
-    {
-        return Ok();
     }
 }
