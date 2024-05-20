@@ -1,20 +1,25 @@
-﻿namespace Backend.Common.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
-public partial class Folder
+namespace Backend.Common.Models;
+
+[PrimaryKey("FolderId")]
+public class Folder
 {
-    public Guid? FolderId { get; set; }
+    public Guid FolderId { get; set; }
 
-    public Guid? UserId { get; set; }
+    public Guid UserId { get; set; }
 
     public bool IsRoot { get; set; }
 
     public string Name { get; set; } = null!;
 
-    public virtual FolderDeckLink? FolderDeckLink { get; set; }
+    public Guid? ParentId { get; set; } = null!;
 
-    public virtual ICollection<FolderParentChildLink> FolderParentChildLinkChildFolders { get; set; } = new List<FolderParentChildLink>();
+    public virtual ICollection<Deck> Decks { get; set; } = new List<Deck>();
 
-    public virtual FolderParentChildLink? FolderParentChildLinkParentFolder { get; set; }
+    public virtual ICollection<Folder> Children { get; set; } = new List<Folder>();
+
+    public virtual Folder? Parent { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

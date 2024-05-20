@@ -51,7 +51,8 @@ public class FolderController(IFolderHandler folderHandler) : Controller
         [FromQuery(Name = "id"), BindRequired] Guid guid
         )
     {
-        return Ok(await folderHandler.GetParentFolder(guid));
+        Guid? parentId = await folderHandler.GetParentFolder(guid);
+        return Ok(parentId ?? guid);
     }
 
     [HttpGet]

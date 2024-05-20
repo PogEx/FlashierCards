@@ -1,60 +1,82 @@
-﻿using System.Data;
+﻿using Backend.Common.Models;
 using Backend.RestApi.Contracts.Content;
-using Dapper;
-using Dapper.SimpleSqlBuilder;
+using Backend.RestApi.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.RestApi.ContentHandlers;
 
-public class FolderHandler(IDbConnection connection): IFolderHandler
+public class FolderHandler(Func<FlashiercardsContext> createContext): IFolderHandler
 {
     public async Task<Guid> CreateFolder(Guid owner, Guid parent, string name)
     {
-        Guid createdFolder = await CreateFolder(owner, name, false);
-        
-        Builder builder = SimpleBuilder.Create($"INSERT INTO folder_parent_child_link(parent_folder_id, child_folder_id) VALUES ({parent}, {createdFolder})");
-        await connection.ExecuteAsync(builder.Sql, builder.Parameters);
-        
-        return createdFolder;
+        await using (FlashiercardsContext context = createContext())
+        {
+                Guid folderGuid = Guid.NewGuid();
+                await context.Folders.AddAsync(new Folder
+                    { FolderId = folderGuid, Name = name, UserId = owner, IsRoot = false, ParentId = parent});
+                await context.SaveChangesAsync();
+                return folderGuid;
+        }
     }
 
     public async Task<IEnumerable<Guid>> GetChildren(Guid folder)
     {    
-        Builder builder = SimpleBuilder.Create($"SELECT child_folder_id FROM folder_parent_child_link WHERE parent_folder_id = {folder} ");
-        return await connection.QueryAsync<Guid>(builder.Sql, builder.Parameters);
+        await using (FlashiercardsContext context = createContext())
+        {
+            return (await context.Folders
+                .Include(f => f.Children)
+                .FirstAsync(f => f.FolderId == folder)).Children.Select(child => child.FolderId);
+        }
     }
     
-    public async Task<Guid> GetParentFolder(Guid folder)
+    public async Task<Guid?> GetParentFolder(Guid folder)
     {
-        Builder builder = SimpleBuilder.Create($"SELECT parent_folder_id FROM folder_parent_child_link WHERE child_folder_id = {folder} ");
-        return await connection.QueryFirstAsync<Guid>(builder.Sql, builder.Parameters);
+        await using (FlashiercardsContext context = createContext())
+        {
+            return (await context.Folders
+                    .FirstAsync(f => f.FolderId == folder)).ParentId;
+        }
     }
     
     public async Task<Guid> GetUserRoot(Guid user)
     {
-        Builder builder = SimpleBuilder.Create($"SELECT folder_id FROM folder WHERE user_id = {user.ToString()} AND is_root = true");
-        return await connection.QueryFirstAsync<Guid>(builder.Sql, builder.Parameters);
+        await using (FlashiercardsContext context = createContext())
+        {
+            return (await context.Folders.FirstAsync(f => f.UserId == user && f.IsRoot == true)).FolderId;
+        }
     }
     
-    public async Task CreateUserRoot(Guid owner)
+    public async Task<Guid> CreateUserRoot(Guid owner)
     {
-        await CreateFolder(owner, "Home", true);
+        await using (FlashiercardsContext context = createContext())
+        {
+            Guid folderGuid = Guid.NewGuid();
+            await context.Folders.AddAsync(new Folder
+                { FolderId = folderGuid, Name = "Home", UserId = owner, IsRoot = true, ParentId = null});
+            await context.SaveChangesAsync();
+            return folderGuid;
+        }
     }
 
-    public async Task DeleteFolder(Guid folder)
+    public async Task<bool> DeleteFolder(Guid id)
     {
-        throw new NotImplementedException();
+        await using (FlashiercardsContext context = createContext())
+        {
+            Folder folder = await context.Folders
+                .Include(f => f.Children)
+                .FirstAsync(f => f.FolderId == id);
+            if (folder.IsRoot)
+                return false;
+            
+            context.RemoveRange(folder.Children);
+            context.Remove(folder);
+            await context.SaveChangesAsync();
+            return true;
+        }
     }
 
     public async Task ChangeFolder(string name)
     {
         throw new NotImplementedException();
-    }
-
-    private async Task<Guid> CreateFolder(Guid owner, string name, bool isRoot)
-    {
-        Guid folderGuid = Guid.NewGuid();
-        Builder builder = SimpleBuilder.Create($"INSERT INTO folder(folder_id, user_id, is_root, name) VALUES ({folderGuid}, {owner}, {isRoot}, {name})");
-        await connection.ExecuteAsync(builder.Sql, builder.Parameters);
-        return folderGuid;
     }
 }

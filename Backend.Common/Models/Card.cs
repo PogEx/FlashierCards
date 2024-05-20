@@ -1,8 +1,11 @@
-﻿namespace Backend.Common.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
-public partial class Card
+namespace Backend.Common.Models;
+
+[PrimaryKey("CardId")]
+public class Card
 {
-    public Guid? CardId { get; set; }
+    public Guid CardId { get; set; }
 
     public int Type { get; set; }
 

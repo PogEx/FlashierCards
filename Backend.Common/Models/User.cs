@@ -1,8 +1,11 @@
-﻿namespace Backend.Common.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
-public partial class User
+namespace Backend.Common.Models;
+
+[PrimaryKey("UserId")]
+public class User
 {
-    public Guid? UserId { get; set; } = null!;
+    public Guid UserId { get; set; }
 
     public string Name { get; set; } = null!;
 

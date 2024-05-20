@@ -1,10 +1,14 @@
-﻿namespace Backend.Common.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
-public partial class CardFrontBackLink
+namespace Backend.Common.Models;
+
+[PrimaryKey(propertyName: "FrontCardId")]
+public class CardFrontBackLink
 {
-    public Guid? FrontCardId { get; set; } = null!;
+    
+    public Guid FrontCardId { get; set; }
 
-    public Guid? BackCardId { get; set; } = null!;
+    public Guid BackCardId { get; set; }
 
     public virtual Card BackCard { get; set; } = null!;
 
