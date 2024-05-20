@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using Backend.Common.Models;
+﻿using Backend.Common.Models;
 using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
-namespace Backend.Common;
+namespace Backend.RestApi.Database;
 
-public partial class FlashiercardsContext : DbContext
+public class FlashiercardsContext : DbContext
 {
-    public FlashiercardsContext()
+    private readonly IConfiguration _configuration;
+
+    public FlashiercardsContext(IConfiguration configuration)
     {
+        _configuration = configuration;
     }
 
-    public FlashiercardsContext(DbContextOptions<FlashiercardsContext> options)
+    public FlashiercardsContext(DbContextOptions<FlashiercardsContext> options, IConfiguration configuration)
         : base(options)
     {
+        _configuration = configuration;
     }
 
     public virtual DbSet<Card> Cards { get; set; }
@@ -24,20 +25,12 @@ public partial class FlashiercardsContext : DbContext
     public virtual DbSet<CardType> CardTypes { get; set; }
 
     public virtual DbSet<Deck> Decks { get; set; }
-
     public virtual DbSet<Folder> Folders { get; set; }
-
-    public virtual DbSet<FolderDeckLink> FolderDeckLinks { get; set; }
-
-    public virtual DbSet<FolderParentChildLink> FolderParentChildLinks { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
-
     public virtual DbSet<UserSetting> UserSettings { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseMySql("server=descus.de;database=flashiercards;uid=dotnet;pwd=\"*22N4H2Z5N^%xL*,+.Mo0__B:+?9;8rT\";charset=utf8;port=3306", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.4.0-mysql"));
+        => optionsBuilder.UseMySql(_configuration.GetSection("ConnectionStrings")["mysqldb"], ServerVersion.Parse("8.4.0-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -139,7 +132,7 @@ public partial class FlashiercardsContext : DbContext
                         j.IndexerProperty<string>("DeckId")
                             .HasMaxLength(5)
                             .HasColumnName("deck_id");
-                        j.IndexerProperty<string>("CardId")
+                        j.IndexerProperty<Guid>("CardId")
                             .HasMaxLength(36)
                             .HasColumnName("card_id");
                     });
@@ -149,11 +142,9 @@ public partial class FlashiercardsContext : DbContext
                     "UserDeckLink",
                     r => r.HasOne<User>().WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("subscription_user_guid_fk"),
                     l => l.HasOne<Deck>().WithMany()
                         .HasForeignKey("DeckId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("subscription_deck_deckID_fk"),
                     j =>
                     {
@@ -165,7 +156,7 @@ public partial class FlashiercardsContext : DbContext
                         j.IndexerProperty<string>("DeckId")
                             .HasMaxLength(5)
                             .HasColumnName("deck_id");
-                        j.IndexerProperty<string>("UserId")
+                        j.IndexerProperty<Guid>("UserId")
                             .HasMaxLength(36)
                             .HasColumnName("user_id");
                     });
@@ -176,6 +167,8 @@ public partial class FlashiercardsContext : DbContext
             entity.HasKey(e => e.FolderId).HasName("PRIMARY");
 
             entity.ToTable("folder");
+
+            entity.HasIndex(e => e.ParentId, "folder_folder_folder_id_fk");
 
             entity.HasIndex(e => e.UserId, "folder_user_user_id_fk");
 
@@ -188,68 +181,47 @@ public partial class FlashiercardsContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
+            entity.Property(e => e.ParentId)
+                .HasMaxLength(36)
+                .HasColumnName("parent_id");
             entity.Property(e => e.UserId)
                 .HasMaxLength(36)
                 .HasColumnName("user_id");
 
+            entity.HasOne(d => d.Parent).WithMany(p => p.Children)
+                .HasForeignKey(d => d.ParentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("folder_folder_folder_id_fk");
+
             entity.HasOne(d => d.User).WithMany(p => p.Folders)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("folder_user_user_id_fk");
+
+            entity.HasMany(d => d.Decks).WithMany(p => p.Folders)
+                .UsingEntity<Dictionary<string, object>>(
+                    "FolderDeckLink",
+                    r => r.HasOne<Deck>().WithMany()
+                        .HasForeignKey("DeckId")
+                        .HasConstraintName("folder_deck_link_deck_deck_id_fk"),
+                    l => l.HasOne<Folder>().WithMany()
+                        .HasForeignKey("FolderId")
+                        .HasConstraintName("folder_deck_link_folder_folder_id_fk"),
+                    j =>
+                    {
+                        j.HasKey("FolderId", "DeckId")
+                            .HasName("PRIMARY")
+                            .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
+                        j.ToTable("folder_deck_link");
+                        j.HasIndex(new[] { "DeckId" }, "folder_deck_link_deck_deck_id_fk");
+                        j.IndexerProperty<Guid>("FolderId")
+                            .HasMaxLength(36)
+                            .HasColumnName("folder_id");
+                        j.IndexerProperty<string>("DeckId")
+                            .HasMaxLength(5)
+                            .HasColumnName("deck_id");
+                    });
         });
-
-        modelBuilder.Entity<FolderDeckLink>(entity =>
-        {
-            entity.HasKey(e => e.FolderId).HasName("PRIMARY");
-
-            entity.ToTable("folder_deck_link");
-
-            entity.HasIndex(e => e.DeckId, "folder_deck_content_deck_deck_id_fk");
-
-            entity.Property(e => e.FolderId)
-                .HasMaxLength(36)
-                .HasColumnName("folder_id");
-            entity.Property(e => e.DeckId)
-                .HasMaxLength(5)
-                .HasColumnName("deck_id");
-
-            entity.HasOne(d => d.Deck).WithMany(p => p.FolderDeckLinks)
-                .HasForeignKey(d => d.DeckId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("folder_deck_content_deck_deck_id_fk");
-
-            entity.HasOne(d => d.Folder).WithOne(p => p.FolderDeckLink)
-                .HasForeignKey<FolderDeckLink>(d => d.FolderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("folder_deck_content_folder_folder_id_fk");
-        });
-
-        modelBuilder.Entity<FolderParentChildLink>(entity =>
-        {
-            entity.HasKey(e => e.ParentFolderId).HasName("PRIMARY");
-
-            entity.ToTable("folder_parent_child_link");
-
-            entity.HasIndex(e => e.ChildFolderId, "folder_folder_content_folder_folder_id_fk_2");
-
-            entity.Property(e => e.ParentFolderId)
-                .HasMaxLength(36)
-                .HasColumnName("parent_folder_id");
-            entity.Property(e => e.ChildFolderId)
-                .HasMaxLength(36)
-                .HasColumnName("child_folder_id");
-
-            entity.HasOne(d => d.ChildFolder).WithMany(p => p.FolderParentChildLinkChildFolders)
-                .HasForeignKey(d => d.ChildFolderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("folder_folder_content_folder_folder_id_fk_2");
-
-            entity.HasOne(d => d.ParentFolder).WithOne(p => p.FolderParentChildLinkParentFolder)
-                .HasForeignKey<FolderParentChildLink>(d => d.ParentFolderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("folder_folder_content_folder_folder_id_fk");
-        });
-
+        
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PRIMARY");
@@ -285,12 +257,7 @@ public partial class FlashiercardsContext : DbContext
 
             entity.HasOne(d => d.User).WithOne(p => p.UserSetting)
                 .HasForeignKey<UserSetting>(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("user_settings_user_guid_fk");
         });
-
-        OnModelCreatingPartial(modelBuilder);
     }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
