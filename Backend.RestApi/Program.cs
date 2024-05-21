@@ -17,7 +17,7 @@ public static class Program
         webApplicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         webApplicationBuilder.Host.ConfigureContainer(
             (HostBuilderContext context, ContainerBuilder builder) => 
-                SetupAutofacContainer(context, builder, webApplicationBuilder.Configuration));
+                SetupAutofacContainer(context, builder));
 
         webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_CONFIG_PATH") + "db.json", optional: false, reloadOnChange: true);
         webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_CONFIG_PATH") + "jwt.json", optional: false, reloadOnChange: true);
@@ -96,8 +96,8 @@ public static class Program
         app.Run();
     }
 
-    private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder, IConfiguration configuration)
+    private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder)
     {
-        builder.RegisterModule(new RestModule(configuration));
+        builder.RegisterModule(new RestModule());
     }
 }
