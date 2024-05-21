@@ -17,7 +17,7 @@ public static class Program
         webApplicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         webApplicationBuilder.Host.ConfigureContainer(
             (HostBuilderContext context, ContainerBuilder builder) => 
-                SetupAutofacContainer(context, builder, webApplicationBuilder.Configuration));
+                SetupAutofacContainer(context, builder));
 
         webApplicationBuilder.Services.AddAuthentication(options =>
         {
@@ -93,8 +93,8 @@ public static class Program
         app.Run();
     }
 
-    private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder, IConfiguration configuration)
+    private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder)
     {
-        builder.RegisterModule(new RestModule(configuration));
+        builder.RegisterModule(new RestModule());
     }
 }

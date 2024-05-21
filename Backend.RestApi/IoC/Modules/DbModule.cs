@@ -5,7 +5,7 @@ using MySql.Data.MySqlClient;
 
 namespace Backend.RestApi.IoC.Modules;
 
-public class DbModule(IConfiguration configuration) : Module
+public class DbModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
