@@ -75,8 +75,17 @@ public class FolderHandler(Func<FlashiercardsContext> createContext): IFolderHan
         }
     }
 
-    public async Task ChangeFolder(string name)
+    public async Task<bool> ChangeFolder(Guid folder, string? newName = null, Guid? newParent = null)
     {
-        throw new NotImplementedException();
+        await using (FlashiercardsContext context = createContext())
+        {
+            Folder folderToChange = await context.Folders.FirstAsync(f => f.FolderId == folder);
+            
+            folderToChange.ParentId = newParent ?? folderToChange.ParentId;
+            folderToChange.Name = newName ?? folderToChange.Name;
+            
+            await context.SaveChangesAsync();
+            return true;
+        }
     }
 }

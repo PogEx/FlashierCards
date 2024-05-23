@@ -27,6 +27,7 @@ public class FolderController(IFolderHandler folderHandler) : Controller
         [FromBody, BindRequired] FolderChangeData data
         )
     {
+        await folderHandler.ChangeFolder(id, data.Name, data.Parent);
         return Ok();
     }
     
