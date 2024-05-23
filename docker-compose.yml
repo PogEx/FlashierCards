@@ -11,8 +11,8 @@
       - "frontend"
       - "database"
     volumes:
-      - rest-backend-data-store:/app/data
-      - rest-backend-app:/app
+      - rest-backend-data-store:/flashiercards/data
+      - rest-backend-config:/flashiercards/config
     depends_on:
       - db
 
@@ -27,7 +27,7 @@
     networks:
       - "frontend"
     volumes:
-      - html-backend-app:/app
+      - html-backend-config:/flashiercards/config
     depends_on:
       - backend.restapi
     
@@ -56,6 +56,6 @@ volumes:
   db-data:
   db-config:
   rest-backend-data-store:
-  rest-backend-app:
-  html-backend-app:
+  rest-backend-config:
+  html-backend-config:
   

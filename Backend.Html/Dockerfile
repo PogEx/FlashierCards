@@ -1,6 +1,11 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER $APP_UID
 WORKDIR /app
+
+RUN mkdir "/flashiercards/config"
+
+ENV FLASHIERCARDS_CONFIG_PPATH "/flashiercards/config"
+
 EXPOSE 8080
 EXPOSE 8081
 
