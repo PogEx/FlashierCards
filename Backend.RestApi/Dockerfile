@@ -7,7 +7,7 @@ EXPOSE 8081
 RUN mkdir "/flashiercards/data"
 RUN mkdir "/flashiercards/config"
 
-ENV FLASHIERCARDS_CONFIG_PPATH "/flashiercards/config"
+ENV FLASHIERCARDS_CONFIG_PATH: "/flashiercards/config"
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Debug

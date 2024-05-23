@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN mkdir "/flashiercards/config"
 
-ENV FLASHIERCARDS_CONFIG_PPATH "/flashiercards/config"
+ENV FLASHIERCARDS_CONFIG_PATH "/flashiercards/config"
 
 EXPOSE 8080
 EXPOSE 8081
