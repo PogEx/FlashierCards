@@ -2,7 +2,7 @@
 USER $APP_UID
 WORKDIR /app
 
-RUN mkdir "/flashiercards/config"
+RUN mkdir /flashiercards/config
 
 ENV FLASHIERCARDS_CONFIG_PATH "/flashiercards/config"
 
