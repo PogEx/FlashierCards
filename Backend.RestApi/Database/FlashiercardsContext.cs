@@ -240,6 +240,7 @@ public class FlashiercardsContext : DbContext
             entity.Property(e => e.Salt)
                 .HasMaxLength(255)
                 .HasColumnName("salt");
+            entity.HasIndex(user => user.Name).IsUnique();
         });
 
         modelBuilder.Entity<UserSetting>(entity =>
