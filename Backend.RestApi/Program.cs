@@ -19,6 +19,9 @@ public static class Program
             (HostBuilderContext context, ContainerBuilder builder) => 
                 SetupAutofacContainer(context, builder, webApplicationBuilder.Configuration));
 
+        webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_CONFIG_PATH") + "db.json", optional: false, reloadOnChange: true);
+        webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_CONFIG_PATH") + "jwt.json", optional: false, reloadOnChange: true);
+        
         webApplicationBuilder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
