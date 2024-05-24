@@ -1,4 +1,6 @@
-﻿namespace Backend.RestApi.Contracts.Content;
+﻿using Backend.Common.Models.Folders;
+
+namespace Backend.RestApi.Contracts.Content;
 
 public interface IFolderHandler
 {
@@ -9,4 +11,5 @@ public interface IFolderHandler
     Task<IEnumerable<Guid>> GetChildren(Guid folder);
     Task<Guid?> GetParentFolder(Guid folder);
     Task<Guid> GetUserRoot(Guid owner);
+    Task<Folder> GetFolder(Guid guid);
 }

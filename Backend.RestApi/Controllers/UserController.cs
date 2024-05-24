@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using Backend.Common.Models;
+using Backend.Common.Models.User;
 using Backend.RestApi.Contracts.Auth;
 using Backend.RestApi.Contracts.Content;
 using Microsoft.AspNetCore.Authorization;
@@ -19,9 +19,10 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [SwaggerResponse(200, null, typeof(User))]
-    public IActionResult Get()
+    public async Task<IActionResult> Get()
     {
-        return Ok(userHandler.GetUser(new Guid(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value)));
+        return Ok(await userHandler.GetUser(new Guid(
+                User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value)));
     }
 
     [HttpPatch]
@@ -76,7 +77,7 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
         if (user is null)
             return NotFound();
         
-        string? bearer = await userHandler.Login(user.UserId, password);
+        string? bearer = await userHandler.Login(user.Value.UserId, password);
         
         if (bearer is null)
             return Unauthorized();
