@@ -1,4 +1,4 @@
-﻿using Backend.Common.Models;
+﻿using Backend.Common.Models.User;
 
 namespace Backend.RestApi.Contracts.Auth;
 

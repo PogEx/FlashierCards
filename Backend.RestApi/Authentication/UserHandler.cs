@@ -1,5 +1,6 @@
 ﻿using System.Web.Helpers;
-using Backend.Common.Models;
+using Backend.Common.Models.DatabaseModels;
+using Backend.Common.Models.User;
 using Backend.RestApi.Contracts.Auth;
 using Backend.RestApi.Database;
 using Microsoft.EntityFrameworkCore;
@@ -14,15 +15,15 @@ public class UserHandler(ITokenManager tokenManager, Func<FlashiercardsContext> 
         string hashedPassword = Crypto.HashPassword(salt + password);
         
         Guid userGuid = Guid.NewGuid();
-        User user = new(){UserId = userGuid, Name = name, PasswordHash = hashedPassword, Salt = salt};
+        DbUser dbUser = new(){UserId = userGuid, Name = name, PasswordHash = hashedPassword, Salt = salt};
 
         await using (FlashiercardsContext context = createContext())
         {
             if (await context.Users.AnyAsync(u => u.Name == name))
                 return null;
             
-            await context.Users.AddAsync(user);
-            await context.UserSettings.AddAsync(new UserSetting { IsDark = true, UserId = userGuid });
+            await context.Users.AddAsync(dbUser);
+            await context.UserSettings.AddAsync(new DbUserSetting { IsDark = true, UserId = userGuid });
 
             await context.SaveChangesAsync();
         }
@@ -34,7 +35,7 @@ public class UserHandler(ITokenManager tokenManager, Func<FlashiercardsContext> 
     {
         await using FlashiercardsContext context = createContext();
         
-        User? result;
+        DbUser? result;
         result = await context.Users.SingleAsync(b => b.UserId == user);
         if (!Crypto.VerifyHashedPassword(result.PasswordHash, result.Salt + password)) 
             return null;
@@ -52,13 +53,13 @@ public class UserHandler(ITokenManager tokenManager, Func<FlashiercardsContext> 
     {
         await using FlashiercardsContext context = createContext();
         
-        return await context.Users.SingleAsync(b => b.Name == name);
+        return new User(await context.Users.SingleAsync(b => b.Name == name));
     }
 
     public async Task<User?> GetUser(Guid guid)
     {
         await using FlashiercardsContext context = createContext();
         
-        return await context.Users.SingleAsync(b => b.UserId == guid);
+        return new User(await context.Users.SingleAsync(b => b.UserId == guid));
     }
 }

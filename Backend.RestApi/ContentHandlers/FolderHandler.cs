@@ -1,6 +1,8 @@
-﻿using Backend.Common.Models;
+﻿using Backend.Common.Models.DatabaseModels;
+using Backend.Common.Models.Folders;
 using Backend.RestApi.Contracts.Content;
 using Backend.RestApi.Database;
+using Backend.RestApi.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.RestApi.ContentHandlers;
@@ -12,8 +14,15 @@ public class FolderHandler(Func<FlashiercardsContext> createContext): IFolderHan
         await using (FlashiercardsContext context = createContext())
         {
                 Guid folderGuid = Guid.NewGuid();
-                await context.Folders.AddAsync(new Folder
-                    { FolderId = folderGuid, Name = name, UserId = owner, IsRoot = false, ParentId = parent});
+                await context.Folders.AddAsync(new DbFolder
+                {
+                    FolderId = folderGuid, 
+                    Name = name, 
+                    UserId = owner, 
+                    IsRoot = false, 
+                    ParentId = parent, 
+                    ColorHex = ColorHelper.NewRandom().ToHex()
+                });
                 await context.SaveChangesAsync();
                 return folderGuid;
         }
@@ -25,7 +34,8 @@ public class FolderHandler(Func<FlashiercardsContext> createContext): IFolderHan
         {
             return (await context.Folders
                 .Include(f => f.Children)
-                .FirstAsync(f => f.FolderId == folder)).Children.Select(child => child.FolderId);
+                .FirstAsync(f => f.FolderId == folder))
+                .Children.Select(child => child.FolderId);
         }
     }
     
@@ -42,17 +52,38 @@ public class FolderHandler(Func<FlashiercardsContext> createContext): IFolderHan
     {
         await using (FlashiercardsContext context = createContext())
         {
-            return (await context.Folders.FirstAsync(f => f.UserId == user && f.IsRoot == true)).FolderId;
+            return (await context.Folders
+                .FirstAsync(f => f.UserId == user && f.IsRoot == true))
+                .FolderId;
         }
     }
-    
+
+    public async Task<Folder> GetFolder(Guid guid)
+    {
+        await using (FlashiercardsContext context = createContext())
+        {
+            DbFolder folder = await context.Folders
+                .AsNoTracking()
+                .Include(dbFolder => dbFolder.Children)
+                .FirstAsync(dbFolder => dbFolder.FolderId == guid);
+            return new Folder(folder);
+        }
+    }
+
     public async Task<Guid> CreateUserRoot(Guid owner)
     {
         await using (FlashiercardsContext context = createContext())
         {
             Guid folderGuid = Guid.NewGuid();
-            await context.Folders.AddAsync(new Folder
-                { FolderId = folderGuid, Name = "Home", UserId = owner, IsRoot = true, ParentId = null});
+            await context.Folders.AddAsync(new DbFolder
+            {
+                FolderId = folderGuid, 
+                Name = "Home", 
+                UserId = owner, 
+                IsRoot = true, 
+                ParentId = null, 
+                ColorHex = "000000"
+            });
             await context.SaveChangesAsync();
             return folderGuid;
         }
@@ -62,27 +93,29 @@ public class FolderHandler(Func<FlashiercardsContext> createContext): IFolderHan
     {
         await using (FlashiercardsContext context = createContext())
         {
-            Folder folder = await context.Folders
+            DbFolder dbFolder = await context.Folders
                 .Include(f => f.Children)
                 .FirstAsync(f => f.FolderId == id);
-            if (folder.IsRoot)
+            if (dbFolder.IsRoot)
                 return false;
             
-            context.RemoveRange(folder.Children);
-            context.Remove(folder);
+            context.RemoveRange(dbFolder.Children);
+            context.Remove(dbFolder);
             await context.SaveChangesAsync();
             return true;
         }
     }
 
-    public async Task<bool> ChangeFolder(Guid folder, string? newName = null, Guid? newParent = null)
+    public async Task<bool> ChangeFolder(Guid folder, string? newName = null, 
+        Guid? newParent = null)
     {
         await using (FlashiercardsContext context = createContext())
         {
-            Folder folderToChange = await context.Folders.FirstAsync(f => f.FolderId == folder);
+            DbFolder dbFolderToChange = await context.Folders
+                .FirstAsync(f => f.FolderId == folder);
             
-            folderToChange.ParentId = newParent ?? folderToChange.ParentId;
-            folderToChange.Name = newName ?? folderToChange.Name;
+            dbFolderToChange.ParentId = newParent ?? dbFolderToChange.ParentId;
+            dbFolderToChange.Name = newName ?? dbFolderToChange.Name;
             
             await context.SaveChangesAsync();
             return true;
