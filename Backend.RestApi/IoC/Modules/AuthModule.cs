@@ -1,6 +1,7 @@
 ﻿using Autofac;
-using Backend.RestApi.Authentication;
+using Backend.RestApi.ContentHandlers;
 using Backend.RestApi.Contracts.Auth;
+using Backend.RestApi.Contracts.Content;
 
 namespace Backend.RestApi.IoC.Modules;
 
@@ -8,7 +9,7 @@ public class AuthModule: Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<JwtTokenManager>().As<ITokenManager>().SingleInstance();
+        builder.RegisterType<JwtTokenHandler>().As<ITokenManager>().SingleInstance();
         builder.RegisterType<UserHandler>().As<IUserHandler>().SingleInstance();
     }
 }

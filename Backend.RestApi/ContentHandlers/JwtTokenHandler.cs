@@ -5,16 +5,11 @@ using Backend.RestApi.Config;
 using Backend.RestApi.Contracts.Auth;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Backend.RestApi.Authentication;
+namespace Backend.RestApi.ContentHandlers;
 
-public class JwtTokenManager : ITokenManager
+public class JwtTokenHandler(IConfiguration configuration) : ITokenManager
 {
-    private JwtConfig _config;
-
-    public JwtTokenManager(IConfiguration configuration)
-    {
-        _config = configuration.GetSection("Jwt").Get<JwtConfig>() ?? new JwtConfig();
-    }
+    private readonly JwtConfig _config = configuration.GetSection("Jwt").Get<JwtConfig>() ?? new JwtConfig();
 
     public string GenerateTokenFor(Guid guid, string name)
     {
@@ -22,11 +17,11 @@ public class JwtTokenManager : ITokenManager
         SigningCredentials credentials = new (securityKey, SecurityAlgorithms.HmacSha256);
         
         Claim[] claims =
-        {
-            new(ClaimTypes.Name, name),
+        [
+            new (ClaimTypes.Name, name),
             new(ClaimTypes.NameIdentifier, guid.ToString()),
             new(ClaimTypes.Expired, "false")
-        };
+        ];
         JwtSecurityToken token = new(
             issuer: _config.Issuer,
             audience: _config.Audience, 

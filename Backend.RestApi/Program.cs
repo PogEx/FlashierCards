@@ -2,9 +2,13 @@ using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Backend.RestApi.IoC.Modules;
+using Backend.RestApi.Logging;
+using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace Backend.RestApi;
 
@@ -21,6 +25,11 @@ public static class Program
 
         webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_CONFIG_PATH") + "db.json", optional: false, reloadOnChange: true);
         webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_CONFIG_PATH") + "jwt.json", optional: false, reloadOnChange: true);
+
+        webApplicationBuilder.Services.AddSerilog((services, lc) => 
+            lc.ReadFrom.Configuration(webApplicationBuilder.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext());
         
         webApplicationBuilder.Services.AddAuthentication(options =>
         {
@@ -41,7 +50,7 @@ public static class Program
             };
         });
         webApplicationBuilder.Services.AddAuthorization();
-        
+
         webApplicationBuilder.Services
             .AddControllers()
             .AddControllersAsServices();
@@ -74,12 +83,14 @@ public static class Program
         webApplicationBuilder.Services.AddEndpointsApiExplorer();
         
         WebApplication app = webApplicationBuilder.Build();
+        InitResultLogger(Log.Logger);
         
         app.UseRouting();
         app.UseHttpsRedirection();
         
         if (app.Environment.IsDevelopment())
         {
+            app.UseSerilogRequestLogging();
             app.UseDeveloperExceptionPage();
             app.UseHsts();
             app.UseSwagger();
@@ -99,5 +110,11 @@ public static class Program
     private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder)
     {
         builder.RegisterModule(new RestModule());
+        builder.RegisterInstance(Log.Logger).As<ILogger>();
+    }
+
+    private static void InitResultLogger(ILogger logger)
+    {
+        Result.Setup(cfg => cfg.Logger = new ResultLogger(logger));
     }
 }
