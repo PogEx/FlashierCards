@@ -5,7 +5,15 @@ namespace Backend.RestApi.Helpers;
 public static class ColorHelper
 {
     private static readonly Color[] Colors = [
-        Color.Blue, Color.Turquoise, Color.Orange, Color.Red, Color.Purple, Color.Green, Color.Pink, Color.White];
+        Color.Blue, 
+        Color.Turquoise, 
+        Color.Orange, 
+        Color.Red, 
+        Color.Purple, 
+        Color.Green, 
+        Color.Pink, 
+        Color.White
+    ];
     private static readonly Random Random = new ();
     
     public static Color NewRandom()
