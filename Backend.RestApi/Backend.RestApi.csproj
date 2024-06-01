@@ -39,9 +39,4 @@
     <ItemGroup>
       <Compile Remove="Configurations\DatabaseConfiguration.cs" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Database\" />
-    </ItemGroup>
-
 </Project>
