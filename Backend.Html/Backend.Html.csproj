@@ -20,6 +20,9 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+      <Content Remove="wwwroot\loginExperiment.html" />
+      <Content Remove="wwwroot\frontend\**" />
+      <Content Remove="wwwroot\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,6 +31,32 @@
 
     <ItemGroup>
       <Folder Include="Resources\www\UiElements\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="wwwroot\frontend\**" />
+      <Compile Remove="wwwroot\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="wwwroot\frontend\**" />
+      <EmbeddedResource Remove="wwwroot\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="wwwroot\frontend\**" />
+      <None Remove="wwwroot\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\home-experiment.html" />
+      <_ContentIncludedByDefault Remove="wwwroot\home.html" />
+      <_ContentIncludedByDefault Remove="wwwroot\login.html" />
+      <_ContentIncludedByDefault Remove="wwwroot\loginExperiment.html" />
+      <_ContentIncludedByDefault Remove="wwwroot\navbar.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\signUp.html" />
+      <_ContentIncludedByDefault Remove="wwwroot\stylesheet.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\Template.html" />
     </ItemGroup>
 
 </Project>
