@@ -91,10 +91,10 @@
 
 .menu{
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(10, 1fr);
     justify-content: space-around;
     flex-wrap: wrap;
-    background-color: gray;
+    background-color: #e6fdf4;
 }
 
 .folder img{
@@ -111,5 +111,12 @@
     background-color: #d1d1d1;
 }
 
+.fixed-bottom.custom-hover:hover{
+    color:  black;
+    background-color: blue;
+}
 
-
+.fixed-bottom.custom-hover.dropdown-content  {
+    background-color: #45a049;
+    color: #ffffff ;
+}

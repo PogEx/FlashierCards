@@ -46,6 +46,7 @@
     <ItemGroup>
       <None Remove="wwwroot\frontend\**" />
       <None Remove="wwwroot\**" />
+      <None Remove="frontend\login-signup.css" />
     </ItemGroup>
 
     <ItemGroup>
