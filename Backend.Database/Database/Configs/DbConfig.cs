@@ -1,4 +1,4 @@
-﻿namespace Backend.RestApi.Config;
+﻿namespace Backend.Database.Database.Configs;
 
 public class DbConfig
 {

@@ -1,7 +1,7 @@
 using System.Security.Claims;
-using Backend.Common.Models.User;
-using Backend.RestApi.Contracts.Auth;
+using Backend.Common.Models.Users;
 using Backend.RestApi.Contracts.Content;
+using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -18,11 +18,11 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [SwaggerResponse(200, null, typeof(User))]
+    [SwaggerResponse(200, null, typeof(UserDto))]
     public async Task<IActionResult> Get()
     {
-        return Ok(await userHandler.GetUser(new Guid(
-                User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value)));
+        return Ok((await userHandler.GetUser(new Guid(
+                User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value))).Value);
     }
 
     [HttpPatch]
@@ -46,14 +46,18 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
             || !password.Equals(passwordEnsure))
             return BadRequest();
         
-        Guid? guid = await userHandler.CreateUser(name, password);
-        if (guid is null)
+        Result<Guid> userGuidResult = await userHandler.CreateUser(name, password);
+        if (userGuidResult.HasError(error => error.Metadata["ErrorCode"].Equals("409")))
         {
-            return Problem();
+            return Conflict($"A user with the name {name} already exists");
         }
-        await folderHandler.CreateUserRoot(guid.Value);
-
-        return Created("", guid);
+        
+        Result<Guid> folderGuidResult = await folderHandler.CreateUserRoot(userGuidResult.Value);
+        if (folderGuidResult.HasError(error => error.Metadata["ErrorCode"].Equals("")))
+        {
+            
+        }
+        return Created("", userGuidResult.Value);
     }
 
     [HttpPost("login")]
@@ -72,16 +76,17 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
             || string.IsNullOrEmpty(password))
             return BadRequest();
         
-        User? user = await userHandler.GetUser(name);
+        Result<UserDto> userResult = await userHandler.GetUser(name);
+        userResult.Log();
         
-        if (user is null)
+        if (userResult.IsFailed)
             return NotFound();
         
-        string? bearer = await userHandler.Login(user.Value.UserId, password);
+        Result<string> bearerResult = await userHandler.Login(userResult.Value.UserId, password);
         
-        if (bearer is null)
+        if (bearerResult.IsFailed)
             return Unauthorized();
         
-        return Ok(bearer);
+        return Ok(bearerResult.Value);
     }
 }

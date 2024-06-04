@@ -1,124 +1,150 @@
-﻿using Backend.Common.Models.DatabaseModels;
-using Backend.Common.Models.Folders;
+﻿using Backend.Common.Models.Folders;
+using Backend.Database.Database.Context;
+using Backend.Database.Database.DatabaseModels;
 using Backend.RestApi.Contracts.Content;
-using Backend.RestApi.Database;
+using Backend.RestApi.Contracts.DatabaseOperator;
 using Backend.RestApi.Helpers;
+using Backend.RestApi.Logging.Errors;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.RestApi.ContentHandlers;
 
-public class FolderHandler(Func<FlashiercardsContext> createContext): IFolderHandler
+public class FolderHandler(IDeckHandlerInternal deckHandler, FlashiercardsContext context): IFolderHandler
 {
-    public async Task<Guid> CreateFolder(Guid owner, Guid parent, string name)
+    public async Task<Result<Guid>> CreateFolder(Guid caller, FolderCreateData data)
     {
-        await using (FlashiercardsContext context = createContext())
-        {
-                Guid folderGuid = Guid.NewGuid();
-                await context.Folders.AddAsync(new DbFolder
-                {
-                    FolderId = folderGuid, 
-                    Name = name, 
-                    UserId = owner, 
-                    IsRoot = false, 
-                    ParentId = parent, 
-                    ColorHex = ColorHelper.NewRandom().ToHex()
-                });
-                await context.SaveChangesAsync();
-                return folderGuid;
-        }
-    }
-
-    public async Task<IEnumerable<Guid>> GetChildren(Guid folder)
-    {    
-        await using (FlashiercardsContext context = createContext())
-        {
-            return (await context.Folders
-                .Include(f => f.Children)
-                .FirstAsync(f => f.FolderId == folder))
-                .Children.Select(child => child.FolderId);
-        }
-    }
-    
-    public async Task<Guid?> GetParentFolder(Guid folder)
-    {
-        await using (FlashiercardsContext context = createContext())
-        {
-            return (await context.Folders
-                    .FirstAsync(f => f.FolderId == folder)).ParentId;
-        }
-    }
-    
-    public async Task<Guid> GetUserRoot(Guid user)
-    {
-        await using (FlashiercardsContext context = createContext())
-        {
-            return (await context.Folders
-                .FirstAsync(f => f.UserId == user && f.IsRoot == true))
-                .FolderId;
-        }
-    }
-
-    public async Task<Folder> GetFolder(Guid guid)
-    {
-        await using (FlashiercardsContext context = createContext())
-        {
-            DbFolder folder = await context.Folders
-                .AsNoTracking()
-                .Include(dbFolder => dbFolder.Children)
-                .FirstAsync(dbFolder => dbFolder.FolderId == guid);
-            return new Folder(folder);
-        }
-    }
-
-    public async Task<Guid> CreateUserRoot(Guid owner)
-    {
-        await using (FlashiercardsContext context = createContext())
+        try
         {
             Guid folderGuid = Guid.NewGuid();
-            await context.Folders.AddAsync(new DbFolder
+            await context.Folders.AddAsync(new Folder
             {
-                FolderId = folderGuid, 
-                Name = "Home", 
-                UserId = owner, 
-                IsRoot = true, 
-                ParentId = null, 
+                FolderId = folderGuid,
+                Name = data.Name,
+                UserId = caller,
+                IsRoot = false,
+                ParentId = data.Parent,
+                ColorHex = ColorHelper.NewRandom().ToHex()
+            });
+            await context.SaveChangesAsync();
+            return folderGuid;
+        }
+        catch (DbUpdateException e)
+        {  
+            return new DatabaseError().CausedBy(e);
+        }
+    }
+    
+    public async Task<Result<Guid>> GetUserRoot(Guid caller)
+    {
+        return (await context.Folders
+                .FirstAsync(f => f.UserId == caller && f.IsRoot == true))
+            .FolderId;
+    }
+
+    public async Task<Result<FolderDto>> GetFolder(Guid caller, Guid guid)
+    {
+        Folder folder = await context.Folders
+            .AsNoTracking()
+            .Include(dbFolder => dbFolder.Children)
+            .Include(dbFolder => dbFolder.Decks)
+            .FirstAsync(dbFolder => dbFolder.FolderId == guid);
+        return folder.ToDto();
+    }
+
+    public async Task<Result<Guid>> CreateUserRoot(Guid caller)
+    {
+        try
+        {
+            Guid folderGuid = Guid.NewGuid();
+            await context.Folders.AddAsync(new Folder
+            {
+                FolderId = folderGuid,
+                Name = "Home",
+                UserId = caller,
+                IsRoot = true,
+                ParentId = null,
                 ColorHex = "000000"
             });
             await context.SaveChangesAsync();
             return folderGuid;
         }
-    }
-
-    public async Task<bool> DeleteFolder(Guid id)
-    {
-        await using (FlashiercardsContext context = createContext())
+        catch (DbUpdateException e)
         {
-            DbFolder dbFolder = await context.Folders
-                .Include(f => f.Children)
-                .FirstAsync(f => f.FolderId == id);
-            if (dbFolder.IsRoot)
-                return false;
-            
-            context.RemoveRange(dbFolder.Children);
-            context.Remove(dbFolder);
-            await context.SaveChangesAsync();
-            return true;
+            return new DatabaseError().CausedBy(e);
         }
     }
 
-    public async Task<bool> ChangeFolder(Guid folder, string? newName = null, 
-        Guid? newParent = null)
+    public async Task<Result> DeleteFolder(Guid caller, Guid folderId)
     {
-        await using (FlashiercardsContext context = createContext())
+        try
         {
-            DbFolder dbFolderToChange = await context.Folders
-                .FirstAsync(f => f.FolderId == folder);
-            
-            dbFolderToChange.ParentId = newParent ?? dbFolderToChange.ParentId;
-            dbFolderToChange.Name = newName ?? dbFolderToChange.Name;
-            
+            Result result = await DeleteFolderInternal(caller, folderId);
             await context.SaveChangesAsync();
-            return true;
+            return result;
+        }
+        catch (DbUpdateException e)
+        {
+            return new DatabaseError().CausedBy(e);
+        }
+    }
+
+    public async Task<Result> ChangeFolder(Guid caller, Guid folder, FolderChangeData data)
+    {
+        try
+        {
+            Folder folderToChange = await context.Folders
+                .FirstAsync(f => f.FolderId == folder);
+
+            folderToChange.ParentId = data.Parent ?? folderToChange.ParentId;
+            folderToChange.Name = data.Name ?? folderToChange.Name;
+            folderToChange.ColorHex = data.ColorHex ?? folderToChange.ColorHex;
+
+            await context.SaveChangesAsync();
+            return Result.Ok();
+        }
+        catch (DbUpdateException e)
+        {
+            return new DatabaseError().CausedBy(e);
+        }
+    }
+    private async Task<Result> DeleteFolderInternal(Guid caller, Guid folderId)
+    {
+        try
+        {
+            DbSet<Folder> folderSet = context.Folders;
+            if (!folderSet.Any()) 
+                return Result.Fail(new NotFoundError(folderId));
+            
+            Folder folder = await folderSet
+                .Include(f => f.Children)
+                .Include(f => f.Decks)
+                .ThenInclude(d => d.Users)
+                .Include(f => f.User)
+                .FirstAsync(f => f.FolderId == folderId);
+            
+            if (folder.UserId != caller)
+                return Result.Fail(new ForbiddenError(caller, folderId));
+
+            if (folder.IsRoot)
+                return Result.Fail(new ForbiddenError(caller, folderId));
+
+            foreach (Folder folderChild in folder.Children)
+            {
+                await DeleteFolderInternal(caller, folderChild.FolderId);
+            }
+            
+            foreach (Deck deck in folder.Decks)
+            {
+                await deckHandler.DeleteDeckInternal(caller, deck.DeckId);
+            }
+            
+            context.Folders.Remove(folder);
+            return Result.Ok();
+        }
+        catch (DbUpdateException e)
+        {
+            return new DatabaseError().CausedBy(e);
         }
     }
 }

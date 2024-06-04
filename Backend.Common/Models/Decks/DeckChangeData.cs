@@ -2,5 +2,5 @@
 
 public class DeckChangeData
 {
-    
+    public string? Name { get; set; }
 }
