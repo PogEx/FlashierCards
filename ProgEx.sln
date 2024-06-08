@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Common", "Backend.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Html", "Backend.Html\Backend.Html.csproj", "{A365F637-4071-41A1-AECA-ADBBF512E69D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Database", "Backend.Database\Backend.Database.csproj", "{1F928A8B-73A3-4535-BA5A-C3F8A2B3BF15}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{A365F637-4071-41A1-AECA-ADBBF512E69D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A365F637-4071-41A1-AECA-ADBBF512E69D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A365F637-4071-41A1-AECA-ADBBF512E69D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F928A8B-73A3-4535-BA5A-C3F8A2B3BF15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F928A8B-73A3-4535-BA5A-C3F8A2B3BF15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F928A8B-73A3-4535-BA5A-C3F8A2B3BF15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F928A8B-73A3-4535-BA5A-C3F8A2B3BF15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AB6E0C4A-57DD-4930-ABE2-11F3055A0CCC} = {6306DF9D-6E28-49DA-8440-C2D7F1528175}

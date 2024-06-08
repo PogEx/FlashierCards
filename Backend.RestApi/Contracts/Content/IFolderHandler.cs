@@ -1,15 +1,14 @@
 ﻿using Backend.Common.Models.Folders;
+using FluentResults;
 
 namespace Backend.RestApi.Contracts.Content;
 
 public interface IFolderHandler
 {
-    Task<Guid> CreateFolder(Guid owner, Guid parent, string name);
-    Task<Guid> CreateUserRoot(Guid owner);
-    Task<bool> DeleteFolder(Guid folder);
-    Task<bool> ChangeFolder(Guid folder, string? newName = null, Guid? newParent = null);
-    Task<IEnumerable<Guid>> GetChildren(Guid folder);
-    Task<Guid?> GetParentFolder(Guid folder);
-    Task<Guid> GetUserRoot(Guid owner);
-    Task<Folder> GetFolder(Guid guid);
+    Task<Result<Guid>> CreateFolder(Guid caller, FolderCreateData data);
+    Task<Result<Guid>> CreateUserRoot(Guid caller);
+    Task<Result> DeleteFolder(Guid caller, Guid folderId);
+    Task<Result> ChangeFolder(Guid caller, Guid folder, FolderChangeData data);
+    Task<Result<Guid>> GetUserRoot(Guid caller);
+    Task<Result<FolderDto>> GetFolder(Guid caller, Guid guid);
 }
