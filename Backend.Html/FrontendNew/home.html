@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Flashiercards Manager</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #343a40;
+            color: white;
+        }
+        
+        .navbar {
+            border-top: 2px solid white;
+            border-bottom: 2px solid white;
+        }
+
+        .nav-item.dropdown{
+            margin-right: 100px;
+            color: white;
+        }
+
+        .fixed-bottom-right {
+            position: fixed;
+            bottom: 50px; 
+            right: 50px; 
+            width: 60px;  
+            height: 60px; 
+            border-radius: 50%; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0; 
+        }
+        
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <ol class="breadcrumb bg-dark">
+            <li class="breadcrumb-item"><a href="#" class="text-white">SignUp</a></li>
+            <li class="breadcrumb-item"><a href="#" class="text-white">Login</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Home</li>
+        </ol>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">                             <!--schiebt es nach recht -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                    User
+                </a>
+                <div class="dropdown-menu dropdown-menu-left">
+                    <a class="dropdown-item" href="#">Profil</a>
+                    <a class="dropdown-item" href="#">Einstellungen</a>
+                    <a class="dropdown-item" href="#">Abmelden</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div>
+    <button class="btn btn-secondary fixed-bottom-right" rounded-circle >Settings</button>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
