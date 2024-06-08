@@ -13,7 +13,8 @@ public static class DtoTypeExtensions
         return new DeckDto
         {
             DeckId = deck.DeckId,
-            Name = deck.DeckTitle
+            Name = deck.DeckTitle,
+            Cards = deck.Cards.Select(c => c.CardId).ToList()
         };
     }
     

@@ -1,7 +1,10 @@
 using System.Security.Claims;
 using Backend.Common.Models.Users;
 using Backend.RestApi.Contracts.Content;
+using Backend.RestApi.Helpers.Extensions;
+using Backend.RestApi.Logging.Errors;
 using FluentResults;
+using FluentResults.Extensions.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -47,17 +50,12 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
             return BadRequest();
         
         Result<Guid> userGuidResult = await userHandler.CreateUser(name, password);
-        if (userGuidResult.HasError(error => error.Metadata["ErrorCode"].Equals("409")))
-        {
-            return Conflict($"A user with the name {name} already exists");
-        }
+        if (userGuidResult.IsFailed) return BadRequest(userGuidResult.Errors);
         
         Result<Guid> folderGuidResult = await folderHandler.CreateUserRoot(userGuidResult.Value);
-        if (folderGuidResult.HasError(error => error.Metadata["ErrorCode"].Equals("")))
-        {
-            
-        }
-        return Created("", userGuidResult.Value);
+        if (folderGuidResult.IsFailed) return Problem("No Connection to Database");
+
+        return Created("/", userGuidResult.Value);
     }
 
     [HttpPost("login")]
@@ -77,7 +75,6 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
             return BadRequest();
         
         Result<UserDto> userResult = await userHandler.GetUser(name);
-        userResult.Log();
         
         if (userResult.IsFailed)
             return NotFound();

@@ -8,13 +8,13 @@ namespace Backend.Database.Database.Context;
 public class FlashiercardsContext : DbContext
 {
     private readonly DbConfig _configuration;
-
-    public FlashiercardsContext(IConfiguration configuration)
+    
+    public FlashiercardsContext(IConfiguration configuration = null)
     {
         _configuration = configuration.GetSection("ConnectionStrings").Get<DbConfig>() ?? new DbConfig();
     }
 
-    public FlashiercardsContext(DbContextOptions<FlashiercardsContext> options, IConfiguration configuration)
+    public FlashiercardsContext(DbContextOptions<FlashiercardsContext> options, IConfiguration configuration = null)
         : base(options)
     {
         _configuration = configuration.GetSection("ConnectionStrings").Get<DbConfig>() ?? new DbConfig();
@@ -22,11 +22,10 @@ public class FlashiercardsContext : DbContext
 
     public virtual DbSet<Card> Cards { get; set; }
 
-    public virtual DbSet<CardFrontBackLink> CardFrontBackLinks { get; set; }
-
     public virtual DbSet<CardType> CardTypes { get; set; }
-
     public virtual DbSet<Deck> Decks { get; set; }
+    
+    public virtual DbSet<DeckInviteCode> DeckInviteCodes { get; set; }
     public virtual DbSet<Folder> Folders { get; set; }
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<UserSetting> UserSettings { get; set; }
@@ -54,40 +53,22 @@ public class FlashiercardsContext : DbContext
             entity.Property(e => e.Text)
                 .HasMaxLength(1023)
                 .HasColumnName("text");
+            entity.Property(e => e.BackId)
+                .HasMaxLength(36)
+                .HasColumnName("back_card_id");
             entity.Property(e => e.Type).HasColumnName("type");
 
             entity.HasOne(d => d.TypeNavigation).WithMany(p => p.Cards)
                 .HasForeignKey(d => d.Type)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("card_content_card_types_id_fk");
+            
+            entity.HasOne(d => d.Back).WithOne(d => d.Front)
+                .HasForeignKey<Card>(d => d.BackId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("card_card_card_id_fk");
         });
-
-        modelBuilder.Entity<CardFrontBackLink>(entity =>
-        {
-            entity.HasKey(e => e.FrontCardId).HasName("PRIMARY");
-
-            entity.ToTable("card_front_back_link");
-
-            entity.HasIndex(e => e.BackCardId, "card_back_card_id_fk");
-
-            entity.Property(e => e.FrontCardId)
-                .HasMaxLength(36)
-                .HasColumnName("front_card_id");
-            entity.Property(e => e.BackCardId)
-                .HasMaxLength(36)
-                .HasColumnName("back_card_id");
-
-            entity.HasOne(d => d.BackCard).WithMany(p => p.CardFrontBackLinkBackCards)
-                .HasForeignKey(d => d.BackCardId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("card_back_card_id_fk");
-
-            entity.HasOne(d => d.FrontCard).WithOne(p => p.CardFrontBackLinkFrontCard)
-                .HasForeignKey<CardFrontBackLink>(d => d.FrontCardId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("card_front_card_id_fk");
-        });
-
+        
         modelBuilder.Entity<CardType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -113,24 +94,22 @@ public class FlashiercardsContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("deck_title");
 
-            entity.HasMany(d => d.Cards).WithMany(p => p.Decks)
+            entity.HasMany(d => d.Cards).WithMany(d => d.Deck)
                 .UsingEntity<Dictionary<string, object>>(
-                    "DeckCardLink",
-                    r => r.HasOne<CardFrontBackLink>().WithMany()
+                    "deck_card_link",
+                    r => r.HasOne<Card>().WithMany()
                         .HasForeignKey("CardId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("deckcontent_card_cardID_fk"),
+                        .HasConstraintName("deck_card_link_card_card_id_fk"),
                     l => l.HasOne<Deck>().WithMany()
                         .HasForeignKey("DeckId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("deckcontent_deck_deckID_fk"),
+                        .HasConstraintName("deck_card_link_deck_deck_id_fk"),
                     j =>
                     {
                         j.HasKey("DeckId", "CardId")
                             .HasName("PRIMARY")
                             .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
                         j.ToTable("deck_card_link");
-                        j.HasIndex(new[] { "CardId" }, "deckcontent_card_cardKey_fk");
+                        j.HasIndex(["DeckId"], "deck_card_link_deck_deck_id_fk");
                         j.IndexerProperty<Guid>("DeckId")
                             .HasMaxLength(36)
                             .HasColumnName("deck_id");
@@ -154,7 +133,7 @@ public class FlashiercardsContext : DbContext
                             .HasName("PRIMARY")
                             .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
                         j.ToTable("user_deck_link");
-                        j.HasIndex(new[] { "UserId" }, "subscription_user_guid_fk");
+                        j.HasIndex(["UserId"], "subscription_user_guid_fk");
                         j.IndexerProperty<Guid>("DeckId")
                             .HasMaxLength(36)
                             .HasColumnName("deck_id");
@@ -217,7 +196,7 @@ public class FlashiercardsContext : DbContext
                             .HasName("PRIMARY")
                             .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
                         j.ToTable("folder_deck_link");
-                        j.HasIndex(new[] { "DeckId" }, "folder_deck_link_deck_deck_id_fk");
+                        j.HasIndex(["DeckId"], "folder_deck_link_deck_deck_id_fk");
                         j.IndexerProperty<Guid>("FolderId")
                             .HasMaxLength(36)
                             .HasColumnName("folder_id");
@@ -241,7 +220,8 @@ public class FlashiercardsContext : DbContext
                 .HasMaxLength(5)
                 .HasColumnName("code");
 
-            entity.Property(e => e.DateTime)
+            entity.Property(e => e.ExpiryTime)
+                .HasColumnType("datetime")
                 .HasColumnName("expiry_date");
 
             entity.HasIndex(e => e.DeckId)
@@ -249,6 +229,7 @@ public class FlashiercardsContext : DbContext
             
             entity.HasOne(e => e.Deck).WithOne(e => e.InviteCode)
                 .HasForeignKey<Deck>(d => d.DeckId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("deck_invite_codes_deck_deck_id_fk");
         });
         

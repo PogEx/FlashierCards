@@ -2,7 +2,6 @@
 using Backend.Database.Database.Context;
 using Backend.Database.Database.DatabaseModels;
 using Backend.RestApi.Contracts.Content;
-using Backend.RestApi.Contracts.DatabaseOperator;
 using Backend.RestApi.Helpers;
 using Backend.RestApi.Logging.Errors;
 using FluentResults;
@@ -10,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.RestApi.ContentHandlers;
 
-public class FolderHandler(IDeckHandlerInternal deckHandler, FlashiercardsContext context): IFolderHandler
+public class FolderHandler(FlashiercardsContext context): IFolderHandler
 {
     public async Task<Result<Guid>> CreateFolder(Guid caller, FolderCreateData data)
     {
@@ -31,7 +30,7 @@ public class FolderHandler(IDeckHandlerInternal deckHandler, FlashiercardsContex
         }
         catch (DbUpdateException e)
         {  
-            return new DatabaseError().CausedBy(e);
+            return new DatabaseError(e);
         }
     }
     
@@ -71,7 +70,7 @@ public class FolderHandler(IDeckHandlerInternal deckHandler, FlashiercardsContex
         }
         catch (DbUpdateException e)
         {
-            return new DatabaseError().CausedBy(e);
+            return new DatabaseError(e);
         }
     }
 
@@ -79,13 +78,27 @@ public class FolderHandler(IDeckHandlerInternal deckHandler, FlashiercardsContex
     {
         try
         {
-            Result result = await DeleteFolderInternal(caller, folderId);
+
+            Folder folder = await context.Folders
+                .Include(f => f.Children)
+                .Include(f => f.Decks)
+                .ThenInclude(d => d.Users)
+                .Include(f => f.User)
+                .FirstAsync(f => f.FolderId == folderId);
+
+            if (folder.UserId != caller)
+                return Result.Fail(new ForbiddenError(caller, folderId));
+
+            if (folder.IsRoot)
+                return Result.Fail(new ForbiddenError(caller, folderId));
+
+            context.Folders.Remove(folder);
             await context.SaveChangesAsync();
-            return result;
+            return Result.Ok();
         }
         catch (DbUpdateException e)
         {
-            return new DatabaseError().CausedBy(e);
+            return new DatabaseError(e);
         }
     }
 
@@ -105,46 +118,7 @@ public class FolderHandler(IDeckHandlerInternal deckHandler, FlashiercardsContex
         }
         catch (DbUpdateException e)
         {
-            return new DatabaseError().CausedBy(e);
-        }
-    }
-    private async Task<Result> DeleteFolderInternal(Guid caller, Guid folderId)
-    {
-        try
-        {
-            DbSet<Folder> folderSet = context.Folders;
-            if (!folderSet.Any()) 
-                return Result.Fail(new NotFoundError(folderId));
-            
-            Folder folder = await folderSet
-                .Include(f => f.Children)
-                .Include(f => f.Decks)
-                .ThenInclude(d => d.Users)
-                .Include(f => f.User)
-                .FirstAsync(f => f.FolderId == folderId);
-            
-            if (folder.UserId != caller)
-                return Result.Fail(new ForbiddenError(caller, folderId));
-
-            if (folder.IsRoot)
-                return Result.Fail(new ForbiddenError(caller, folderId));
-
-            foreach (Folder folderChild in folder.Children)
-            {
-                await DeleteFolderInternal(caller, folderChild.FolderId);
-            }
-            
-            foreach (Deck deck in folder.Decks)
-            {
-                await deckHandler.DeleteDeckInternal(caller, deck.DeckId);
-            }
-            
-            context.Folders.Remove(folder);
-            return Result.Ok();
-        }
-        catch (DbUpdateException e)
-        {
-            return new DatabaseError().CausedBy(e);
+            return new DatabaseError(e);
         }
     }
 }

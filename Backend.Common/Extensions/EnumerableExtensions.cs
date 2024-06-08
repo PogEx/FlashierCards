@@ -9,11 +9,8 @@ public static class EnumerableExtensions
     
     public static IEnumerable<TReturn> MapTo<TIn, TReturn>(this IEnumerable<TIn> enumerable, Func<TIn, TReturn> func)
     {
-        List<TReturn> ret = new();
-        foreach (TIn e in enumerable)
-        {
-            ret.Add(func(e));
-        }
+        List<TReturn> ret = [];
+        enumerable.ForEach(e => ret.Add(func(e)));
         return ret;
     }
 }

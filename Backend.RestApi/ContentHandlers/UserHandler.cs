@@ -35,7 +35,7 @@ public class UserHandler(ITokenManager tokenManager, FlashiercardsContext contex
         }
         catch (DbUpdateException e)
         {
-            return new DatabaseError().CausedBy(e);
+            return new DatabaseError(e);
         }
     }
 

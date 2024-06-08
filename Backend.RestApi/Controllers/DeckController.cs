@@ -11,7 +11,7 @@ namespace Backend.RestApi.Controllers;
 [Route("deck")]
 [Controller]
 [Authorize]
-public class DeckController(IDeckHandler deckHandler) : Controller
+public class DeckController(IDeckHandler deckHandler, IShareable<string> sharable) : Controller
 {
     // GET
     [HttpGet]
@@ -19,8 +19,8 @@ public class DeckController(IDeckHandler deckHandler) : Controller
         [FromQuery(Name = "id"), BindRequired] Guid id
         )
     {
-        
-        return Ok();
+        Result<DeckDto> result = await deckHandler.GetDeckById(User.GetCurrentUser(), id);
+        return Ok(result.Value);
     }
 
     [HttpPost]
@@ -39,6 +39,7 @@ public class DeckController(IDeckHandler deckHandler) : Controller
         [FromQuery(Name = "id"), BindRequired] Guid id, 
         [FromBody, BindRequired] DeckChangeData data)
     {
+        Result result = await deckHandler.UpdateDeck(User.GetCurrentUser(), id, data);
         return Ok();
     }
     
@@ -55,8 +56,22 @@ public class DeckController(IDeckHandler deckHandler) : Controller
     }
 
     [HttpPost("import")]
-    public IActionResult ImportDeck([FromBody] Guid id)
+    public async Task<IActionResult> ImportDeck(
+        [FromQuery(Name="key"), BindRequired] string key,
+        [FromQuery(Name="folder")] Guid folderId
+        )
     {
-        return Created();
+        Result<Guid> result = await sharable.Import(User.GetCurrentUser(), folderId, key);
+        return Ok(result.Value);
+    }
+    
+    [HttpPost("share")]
+    public async Task<IActionResult> ShareDeck(
+        [FromQuery(Name="id"), BindRequired] Guid id, 
+        [FromQuery(Name="duration")] int duration = 5
+        )
+    {
+        Result<string> result = await sharable.Share(User.GetCurrentUser(), id, duration);
+        return Ok(result.Value);
     }
 }

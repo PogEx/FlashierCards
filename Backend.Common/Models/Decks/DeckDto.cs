@@ -7,4 +7,6 @@ public class DeckDto
 
     public Guid DeckId { get; set; } = default;
     public string Name { get; set; } = null!;
+
+    public ICollection<Guid> Cards { get; set; } = new List<Guid>();
 }
