@@ -4,30 +4,134 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.0.0" />
-        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3"/>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="RestSharp" Version="110.2.1-alpha.0.20" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+      <PackageReference Include="Autofac" Version="8.0.0" />
+      <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Polly" Version="8.4.0" />
+      <PackageReference Include="RestSharp" Version="111.2.0" />
+      <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="111.2.0" />
+      <PackageReference Include="Serilog" Version="3.1.1" />
+      <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+      <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
+      <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     </ItemGroup>
-
     <ItemGroup>
+        <ProjectReference Include="..\Backend.Common\Backend.Common.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\bootstrap-grid.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\bootstrap-reboot.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\bootstrap-utilities.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\bootstrap.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\forms\_floating-labels.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\forms\_form-check.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\forms\_form-control.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\forms\_form-range.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\forms\_form-select.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\forms\_form-text.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\forms\_input-group.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\forms\_labels.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\forms\_validation.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_clearfix.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_color-bg.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_colored-links.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_focus-ring.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_icon-link.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_position.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_ratio.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_stacks.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_stretched-link.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_text-truncation.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_visually-hidden.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\helpers\_vr.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_alert.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_backdrop.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_banner.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_border-radius.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_box-shadow.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_breakpoints.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_buttons.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_caret.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_clearfix.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_color-mode.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_color-scheme.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_container.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_deprecate.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_forms.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_gradients.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_grid.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_image.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_list-group.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_lists.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_pagination.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_reset-text.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_resize.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_table-variants.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_text-truncate.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_transition.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_utilities.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\mixins\_visually-hidden.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\tests\jasmine.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\tests\mixins\_auto-import-of-variables-dark.test.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\tests\mixins\_color-modes.test.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\tests\mixins\_media-query-color-mode-full.test.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\tests\mixins\_utilities.test.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\tests\sass-true\register.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\tests\sass-true\runner.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\tests\utilities\_api.test.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\utilities\_api.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\vendor\_rfs.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_accordion.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_alert.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_badge.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_breadcrumb.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_button-group.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_buttons.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_card.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_carousel.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_close.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_containers.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_dropdown.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_forms.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_functions.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_grid.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_helpers.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_images.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_list-group.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_maps.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_mixins.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_modal.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_nav.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_navbar.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_offcanvas.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_pagination.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_placeholders.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_popover.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_progress.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_reboot.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_root.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_spinners.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_tables.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_toasts.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_tooltip.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_transitions.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_type.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_utilities.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_variables-dark.scss" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\scss\_variables.scss" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Update="scss\app.scss">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Backend.Common\Backend.Common.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Resources\www\UiElements\" />
     </ItemGroup>
 
 </Project>

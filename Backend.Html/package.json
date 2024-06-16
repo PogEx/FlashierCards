@@ -1,0 +1,21 @@
+﻿{
+  "name": "backend.html",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sass-dev": "sass --style=expanded scss:wwwroot --load-path=node_modules/",
+    "sass-prod": "sass --no-source-map --style=compressed scss:wwwroot --load-path=node_modules/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PogEx/FlashierCards.git"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3"
+  },
+  "devDependencies": {
+    "sass": "^1.77.5"
+  },
+  "private": true
+}
