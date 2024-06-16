@@ -1,7 +1,10 @@
 using System.Security.Claims;
-using Backend.Common.Models;
-using Backend.Common.Models.Auth;
-using Backend.RestApi.Contracts.Auth;
+using Backend.Common.Models.Users;
+using Backend.RestApi.Contracts.Content;
+using Backend.RestApi.Helpers.Extensions;
+using Backend.RestApi.Logging.Errors;
+using FluentResults;
+using FluentResults.Extensions.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -12,13 +15,29 @@ namespace Backend.RestApi.Controllers;
 [Route("user")]
 [Controller]
 [Authorize]
-public class UserController (IUserHandler userHandler) : Controller
+public class UserController (IUserHandler userHandler, IFolderHandler folderHandler) : Controller
 {
-    [HttpPost("create")]
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [SwaggerResponse(200, null, typeof(UserDto))]
+    public async Task<IActionResult> Get()
+    {
+        return Ok((await userHandler.GetUser(new Guid(
+                User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value))).Value);
+    }
+
+    [HttpPatch]
+    public IActionResult ChangeUserData()
+    {
+        return Ok();
+    }
+    [HttpPost]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult CreateUser(
+    public async Task<IActionResult> CreateUser(
         [FromForm, BindRequired] string name,
         [FromForm, BindRequired, SwaggerSchema(Format = "password")]
         string password,
@@ -30,9 +49,13 @@ public class UserController (IUserHandler userHandler) : Controller
             || !password.Equals(passwordEnsure))
             return BadRequest();
         
-        Guid? guid = userHandler.CreateUser(name, password);
+        Result<Guid> userGuidResult = await userHandler.CreateUser(name, password);
+        if (userGuidResult.IsFailed) return BadRequest(userGuidResult.Errors);
+        
+        Result<Guid> folderGuidResult = await folderHandler.CreateUserRoot(userGuidResult.Value);
+        if (folderGuidResult.IsFailed) return Problem("No Connection to Database");
 
-        return guid is null ? Problem() : Created("", guid);
+        return Created("/", userGuidResult.Value);
     }
 
     [HttpPost("login")]
@@ -41,7 +64,7 @@ public class UserController (IUserHandler userHandler) : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Login(
+    public async Task<IActionResult> Login(
         [FromForm, BindRequired] string name,
         [FromForm, BindRequired, SwaggerSchema(Format = "password")]
         string password
@@ -51,31 +74,16 @@ public class UserController (IUserHandler userHandler) : Controller
             || string.IsNullOrEmpty(password))
             return BadRequest();
         
-        User? user = userHandler.GetUser(name);
+        Result<UserDto> userResult = await userHandler.GetUser(name);
         
-        if (user is null)
+        if (userResult.IsFailed)
             return NotFound();
         
-        TokenLease? bearer = userHandler.Login(user.Guid, password);
+        Result<string> bearerResult = await userHandler.Login(userResult.Value.UserId, password);
         
-        if (bearer is null)
+        if (bearerResult.IsFailed)
             return Unauthorized();
         
-        return Ok(bearer);
-    }
-
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public IActionResult Get()
-    {
-        return Ok(userHandler.GetUser(new Guid(User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value)));
-    }
-
-    [HttpPatch]
-    public IActionResult ChangeUserData()
-    {
-        return Ok();
+        return Ok(bearerResult.Value);
     }
 }
