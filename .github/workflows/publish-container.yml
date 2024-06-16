@@ -24,6 +24,17 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          
+      - name: Npm Install
+        run: npm install
+
+      - name: Compile Sass
+        run: npm run sass-prod
         
       - name: Login to Container Registry
         uses: docker/login-action@v3

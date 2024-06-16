@@ -24,9 +24,20 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+          
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
 
       - name: Restore dependencies
         run: dotnet restore
+        
+      - name: Npm Install
+        run: npm install
+        
+      - name: Compile Sass
+        run: npm run sass-prod
 
       - name: Build
         run: dotnet build --no-restore
