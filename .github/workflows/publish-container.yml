@@ -32,9 +32,11 @@ jobs:
           
       - name: Npm Install
         run: npm install
+        working-directory: Backend.Html
 
       - name: Compile Sass
         run: npm run sass-prod
+        working-directory: Backend.Html
         
       - name: Login to Container Registry
         uses: docker/login-action@v3
