@@ -32,9 +32,6 @@
       </Content>
     </ItemGroup>
     <ItemGroup>
-      <Compile Update="Components\Pages\Counter.cs">
-        <DependentUpon>Counter.razor</DependentUpon>
-      </Compile>
       <Compile Update="Components\App.cs">
         <DependentUpon>App.razor</DependentUpon>
       </Compile>

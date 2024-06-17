@@ -1,0 +1,44 @@
+﻿@page "/signup"
+@rendermode InteractiveAuto
+@inject NavigationManager navManager
+
+<PageTitle>Signup</PageTitle>
+
+<div class="container-sm position-absolute top-50 start-50 translate-middle" style="max-width: 400px">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title text-center">Signup</h1>
+            <form>
+                <div class="form-group mt-3 mb-3">
+                    <input type="email" class="form-control" id="email" placeholder="Enter Your username">
+                </div>
+                <div class="form-group mt-3 mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                </div>
+                <div class="form-group mt-3 mb-3">
+                    <input type="password" class="form-control" id="password-ensure" placeholder="Enter your password again">
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary btn-block w-50">
+                        <span class="material-symbols-outlined align-middle" style="color: var(--bs-body-color)">
+                            add
+                        </span>
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-block w-25 float-end text-nowrap" @onclick="GotoLogin">
+                        <span class="material-symbols-outlined align-middle" style="color: var(--bs-body-color)">
+                            login
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private void GotoLogin()
+    {
+        navManager.NavigateTo("/login");
+    }
+}
