@@ -4,7 +4,7 @@ using Backend.Common.Models.Folders;
 using Backend.Common.Models.Users;
 using Backend.Database.Database.DatabaseModels;
 
-namespace Backend.RestApi.Helpers;
+namespace Backend.RestApi.Helpers.Extensions;
 
 public static class DtoTypeExtensions
 {

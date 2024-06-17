@@ -3,7 +3,7 @@ using Backend.Common.Models.Decks;
 using Backend.Database.Database.Context;
 using Backend.Database.Database.DatabaseModels;
 using Backend.RestApi.Contracts.Content;
-using Backend.RestApi.Helpers;
+using Backend.RestApi.Helpers.Extensions;
 using Backend.RestApi.Logging.Errors;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
@@ -34,8 +34,8 @@ public class DeckHandler(FlashiercardsContext context): IDeckHandler, IShareable
             {
                 DeckId = guid,
                 DeckTitle = data.Name,
-                Users = new List<User> { owningUser },
-                Folders = new List<Folder> { containingFolder }
+                User = owningUser,
+                Folder = containingFolder
             });
 
             await context.SaveChangesAsync();
@@ -79,14 +79,13 @@ public class DeckHandler(FlashiercardsContext context): IDeckHandler, IShareable
     {
         try
         {
-            User callingUser = await context.Users
-                .FirstAsync(u => u.UserId == caller);
-            
             Deck deckToRemove = await context.Decks
-                .Include(d => d.Users)
+                .Include(d => d.User)
                 .FirstAsync(d => d.DeckId == deckId);
+            
+            if (deckToRemove.UserId != caller) return Result.Fail(new ForbiddenError(caller, deckId));
 
-            deckToRemove.Users.Remove(callingUser);
+            context.Decks.Remove(deckToRemove);
             
             await context.SaveChangesAsync();
             return Result.Ok();
@@ -102,11 +101,11 @@ public class DeckHandler(FlashiercardsContext context): IDeckHandler, IShareable
         try
         {
             Deck deck = await context.Decks
-                .Include(d => d.InviteCode)
+                .Include(d => d.DeckInviteCode)
                 .FirstAsync(d => d.DeckId == id);
 
             
-            if (deck.InviteCode is null)
+            if (deck.DeckInviteCode is null)
             {
                 string inviteCode = await GenerateInviteCode();
                 await context.DeckInviteCodes.AddAsync(new()
@@ -120,10 +119,10 @@ public class DeckHandler(FlashiercardsContext context): IDeckHandler, IShareable
                 return inviteCode;
             }
 
-            deck.InviteCode.ExpiryTime = DateTime.Now.AddMinutes(duration);
-            context.DeckInviteCodes.Update(deck.InviteCode);
+            deck.DeckInviteCode.ExpiryTime = DateTime.Now.AddMinutes(duration);
+            context.DeckInviteCodes.Update(deck.DeckInviteCode);
             await context.SaveChangesAsync();
-            return deck.InviteCode.Code;
+            return deck.DeckInviteCode.Code;
         }
         catch (DbUpdateException e)
         {
@@ -135,19 +134,23 @@ public class DeckHandler(FlashiercardsContext context): IDeckHandler, IShareable
     {
         DeckInviteCode inviteCode = await context.DeckInviteCodes
             .Include(ic => ic.Deck)
+            .ThenInclude(d => d.Cards)
             .FirstAsync(ic => ic.Code == code);
         User user = await context.Users
             .Include(u => u.Folders)
             .FirstAsync(u => u.UserId == caller);
-        
         Folder f = folderId == Guid.Empty ? 
             user.Folders.First(f => f.IsRoot) : 
             user.Folders.First(f => f.FolderId == folderId);
+
+        Deck d = inviteCode.Deck.Clone();
+        d.UserId = caller;
+        d.Cards.ForEach(c => c.UserId = caller);
+        d.FolderId = f.FolderId;
+        await context.Decks.AddAsync(d);
         
-        inviteCode.Deck.Folders.Add(f);
-        user.Decks.Add(inviteCode.Deck);
         await context.SaveChangesAsync();
-        return inviteCode.DeckId;
+        return d.DeckId;
     }
     
     private static Task<string> GenerateInviteCode()

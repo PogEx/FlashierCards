@@ -9,9 +9,15 @@ public class Deck
 
     public string DeckTitle { get; set; } = null!;
 
-    public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
-    public virtual ICollection<Folder> Folders { get; set; } = new List<Folder>();
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
+    public Guid FolderId { get; set; }
 
-    public DeckInviteCode? InviteCode = null!;
+    public Guid UserId { get; set; }
+
+    public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
+
+    public virtual DeckInviteCode? DeckInviteCode { get; set; }
+
+    public virtual Folder Folder { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
 }

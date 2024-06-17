@@ -1,10 +1,7 @@
-using System.Security.Claims;
 using Backend.Common.Models.Users;
 using Backend.RestApi.Contracts.Content;
 using Backend.RestApi.Helpers.Extensions;
-using Backend.RestApi.Logging.Errors;
 using FluentResults;
-using FluentResults.Extensions.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -15,7 +12,7 @@ namespace Backend.RestApi.Controllers;
 [Route("user")]
 [Controller]
 [Authorize]
-public class UserController (IUserHandler userHandler, IFolderHandler folderHandler) : Controller
+public class UserController (IUserHandler userHandler) : Controller
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -24,36 +21,31 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
     [SwaggerResponse(200, null, typeof(UserDto))]
     public async Task<IActionResult> Get()
     {
-        return Ok((await userHandler.GetUser(new Guid(
-                User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value))).Value);
+        return Ok((await userHandler.GetUser(User.GetCurrentUser())).Value);
     }
 
     [HttpPatch]
-    public IActionResult ChangeUserData()
+    public async Task<IActionResult> ChangeUserData([FromBody, BindRequired] UserChangeData data)
     {
+        await userHandler.ChangeUser(User.GetCurrentUser(), data);
         return Ok();
     }
+    
+    
     [HttpPost]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser(
-        [FromForm, BindRequired] string name,
-        [FromForm, BindRequired, SwaggerSchema(Format = "password")]
-        string password,
-        [FromForm, BindRequired, SwaggerSchema(Format = "password")]
-        string passwordEnsure)
+        [FromBody, BindRequired] UserCreateData data)
     {
-        if (string.IsNullOrEmpty(name)
-            || string.IsNullOrEmpty(password)
-            || !password.Equals(passwordEnsure))
+        if (string.IsNullOrEmpty(data.Name)
+            || string.IsNullOrEmpty(data.Password)
+            || !data.Password.Equals(data.PasswordConfirm))
             return BadRequest();
         
-        Result<Guid> userGuidResult = await userHandler.CreateUser(name, password);
+        Result<Guid> userGuidResult = await userHandler.CreateUser(data);
         if (userGuidResult.IsFailed) return BadRequest(userGuidResult.Errors);
-        
-        Result<Guid> folderGuidResult = await folderHandler.CreateUserRoot(userGuidResult.Value);
-        if (folderGuidResult.IsFailed) return Problem("No Connection to Database");
 
         return Created("/", userGuidResult.Value);
     }
