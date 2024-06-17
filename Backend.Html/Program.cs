@@ -1,6 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Backend.Html.Components;
+using Backend.Html.Components.Pages;
 using Serilog;
 using ILogger = Serilog.ILogger;
 
@@ -24,7 +25,7 @@ public static class Program
         
         // Add services to the container.
         webApplicationBuilder.Services.AddRazorComponents()
-            .AddInteractiveServerComponents();
+            .AddInteractiveServerComponents().AddInteractiveWebAssemblyComponents();
 
         WebApplication app = webApplicationBuilder.Build();
 
@@ -41,9 +42,10 @@ public static class Program
 
         app.UseStaticFiles();
         app.UseAntiforgery();
-
+        
         app.MapRazorComponents<App>()
-            .AddInteractiveServerRenderMode();
+            .AddInteractiveServerRenderMode()
+            .AddInteractiveWebAssemblyRenderMode();
 
         app.Run();
     }

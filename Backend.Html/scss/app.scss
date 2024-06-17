@@ -1,9 +1,33 @@
-@import "../node_modules/bootstrap/scss/functions";
+@import "bootstrap/scss/functions";
+
 @import "bootstrap/scss/variables";
 @import "bootstrap/scss/variables-dark";
-@import "../node_modules/bootstrap/scss/maps";
-@import "../node_modules/bootstrap/scss/mixins";
-@import "../node_modules/bootstrap/scss/root";
 
-$breadcrumb-divider: url("data:image/svg+xml,'data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E'");
-@import "bootstrap/scss/breadcrumb";
+$breadcrumb-divider-color: $secondary;
+$breadcrumb-divider: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><path d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='#{$breadcrumb-divider-color}'/></svg>");
+
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/root";
+
+
+@import "bootstrap/scss/buttons";
+
+[data-bs-theme="dark"] {
+  --bs-primary: #{$orange-300};
+  
+  .btn-primary {
+    --bs-btn-bg: #{$orange-500};
+    --bs-btn-border-color: #{$orange-500};
+    --bs-btn-hover-border-color: #{$orange-700};
+    --bs-btn-hover-bg: #{$orange-600};
+    --bt-btn-active-bg: #{$orange-700};
+    --bs-btn-active-border-color: #{$orange-800};
+  }
+  
+  a{
+    --bs-link-color-rgb: #{$orange-700}
+  }
+}
+
+@import "bootstrap/scss/bootstrap";
