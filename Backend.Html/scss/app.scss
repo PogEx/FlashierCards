@@ -26,7 +26,9 @@ $breadcrumb-divider: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/
   }
   
   a{
-    --bs-link-color-rgb: #{$orange-700}
+    --bs-link-color: #{$orange-700};
+    --bs-link-color-rgb: #{$orange-500};
+    color: var(--bs-link-color);
   }
 }
 

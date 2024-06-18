@@ -1,0 +1,23 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <header class="p-3 mb-3 border-bottom">
+        <div class="container">
+            <div class="d-flex flex-wrap">
+                <div class="my-auto me-auto">
+                    <a href="/" class="d-flex align-items-center mb-lg-0 link-body-emphasis text-decoration-none ">
+                        <img src="favicon.svg" class="bi me-2" width="48" height="48" aria-label="Flashiercards" alt="Flashiercards"/>
+                    </a>
+                </div>
+                <div class="my-auto">
+                    <ThemeToggler/>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

@@ -1,5 +1,7 @@
-﻿<!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+﻿@inject IThemeService themeService;
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="@themeService.ThemeString">
 
 <head>
     <meta charset="utf-8"/>
@@ -16,6 +18,5 @@
 <Routes/>
 <script src="_framework/blazor.web.js"></script>
 <script src="bootstrap/bootstrap.bundle.min.js"></script>
-<script src="themetoggle.js"></script>
 </body>
 </html>

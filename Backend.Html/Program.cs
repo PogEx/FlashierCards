@@ -1,7 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Backend.Html.Components;
-using Backend.Html.Components.Pages;
+using Backend.Html.Services;
 using Serilog;
 using ILogger = Serilog.ILogger;
 
@@ -53,5 +53,6 @@ public static class Program
     private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder)
     {
         builder.RegisterInstance(Log.Logger).As<ILogger>();
+        builder.RegisterType<ThemeService>().As<IThemeService>().SingleInstance();
     }
 }

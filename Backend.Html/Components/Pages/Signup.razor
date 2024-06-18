@@ -1,4 +1,5 @@
 ﻿@page "/signup"
+@layout AnonymousLayout
 @rendermode InteractiveServer
 @inject NavigationManager navManager
 
@@ -24,11 +25,11 @@
                             add
                         </span>
                     </button>
-                    <button type="button" class="btn btn-secondary btn-block w-25 float-end text-nowrap" @onclick="GotoLogin">
+                    <a href="/login"><button type="button" class="btn btn-secondary btn-block w-25 float-end text-nowrap">
                         <span class="material-symbols-outlined align-middle" style="color: var(--bs-body-color)">
                             login
                         </span>
-                    </button>
+                    </button></a>
                 </div>
             </form>
         </div>
