@@ -1,20 +1,10 @@
-@import "bootstrap/scss/functions";
-
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/bootstrap";
 
 $breadcrumb-divider-color: $secondary;
 $breadcrumb-divider: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='8'><path d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='#{$breadcrumb-divider-color}'/></svg>");
 
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
-@import "bootstrap/scss/root";
-
-
-@import "bootstrap/scss/buttons";
-
 [data-bs-theme="dark"] {
-  --bs-primary: #{$orange-300};
+  --bs-primary: #{$orange-500};
   
   .btn-primary {
     --bs-btn-bg: #{$orange-500};
@@ -31,5 +21,3 @@ $breadcrumb-divider: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/
     color: var(--bs-link-color);
   }
 }
-
-@import "bootstrap/scss/bootstrap";

@@ -1,26 +1,51 @@
 ﻿@page "/home"
-@rendermode InteractiveAuto
+@rendermode InteractiveServer
 @inject NavigationManager navManager
 
 
 <PageTitle>Home</PageTitle>
 
+<style>
+    .folder{
+        background-color: var(--bs-primary);
+    }
+    .deck{
+        background-color: var(--bs-secondary);
+    }
+</style>
 
-<div class="container text-center">
-    <div class="row row-cols-3">
-        <div class="col">Column</div>
-        <div class="col">Column</div>
-        <div class="col">Column</div>
-        <div class="col">Column</div>
+
+<div class="container-lg my-5">
+    <div class="row">
+        <div class="col d-flex flex-wrap">
+            @for(int i = 0; i < 100; i++)
+            {
+                <div class="d-flex align-items-center justify-content-center folder m-2" style="width: 10rem; height: 7rem;">
+                    <div>Folder @i  </div>
+                </div>
+                
+            }
+
+            @for(int i = 0; i < 10; i++)
+            {
+                <div class="d-flex align-items-center justify-content-center deck m-2 " style="width: 10rem; height:  7rem;">
+                    <div>Deck</div>
+                </div>
+            }
+
+            <div class="btn-group dropup position-fixed bottom-0 end-0 mb-5 me-5">
+                <button type="button" class="btn btn-secondary rounded-circle align-items-center btn-circle" data-bs-toggle="dropdown" style="aspect-ratio: 1/1">
+                    <span class="material-symbols-outlined align-middle ">
+                        add
+                    </span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Create Deck</a> </li>          
+                    <li><a href="#">Create Folder</a> </li>        
+                </ul>
+            </div>
+
+        </div>
     </div>
 </div>
 
-
-@* @for (int i = 0; i < 10; i++) *@
-@* { *@
-@*     <div style="color: var(--bs-body-color)"> *@
-@*         <div class="col" style="border: 1px solid orangered;"> *@
-@*             Column *@
-@*         </div> *@
-@*     </div> *@
-@* } *@
