@@ -1,4 +1,4 @@
-﻿using Backend.Html.Services;
+﻿using Backend.Html.Services.Contracts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 

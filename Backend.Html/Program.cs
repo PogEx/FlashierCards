@@ -1,7 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Backend.Html.Components;
-using Backend.Html.Services;
+using Backend.Html.IoC;
 using Serilog;
 using ILogger = Serilog.ILogger;
 
@@ -17,6 +17,10 @@ public static class Program
         webApplicationBuilder.Host.ConfigureContainer(
             (HostBuilderContext context, ContainerBuilder builder) => 
                 SetupAutofacContainer(context, builder));
+
+        webApplicationBuilder.Configuration.AddJsonFile(
+            Environment.GetEnvironmentVariable("FLASHIERCARDS_FRONTEND_CONFIG_PATH") + "backend.json", optional: false,
+            reloadOnChange: true);
         
         webApplicationBuilder.Services.AddSerilog((services, lc) => 
             lc.ReadFrom.Configuration(webApplicationBuilder.Configuration)
@@ -53,6 +57,6 @@ public static class Program
     private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder)
     {
         builder.RegisterInstance(Log.Logger).As<ILogger>();
-        builder.RegisterType<ThemeService>().As<IThemeService>().SingleInstance();
+        builder.RegisterModule<HtmlModule>();
     }
 }

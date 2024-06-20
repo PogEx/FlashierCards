@@ -2,10 +2,12 @@ using System.Security.Claims;
 using Backend.Common.Models.Users;
 using Backend.RestApi.Contracts.Content;
 using FluentResults;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Backend.RestApi.Controllers;
 
@@ -34,22 +36,17 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateUser(
-        [FromForm, BindRequired] string name,
-        [FromForm, BindRequired, SwaggerSchema(Format = "password")]
-        string password,
-        [FromForm, BindRequired, SwaggerSchema(Format = "password")]
-        string passwordEnsure)
+    public async Task<IActionResult> CreateUser([FromBody] UserRegister registerData)
     {
-        if (string.IsNullOrEmpty(name)
-            || string.IsNullOrEmpty(password)
-            || !password.Equals(passwordEnsure))
+        if (string.IsNullOrEmpty(registerData.Username)
+            || string.IsNullOrEmpty(registerData.Password)
+            || !registerData.Password.Equals(registerData.ConfirmPassword))
             return BadRequest();
         
-        Result<Guid> userGuidResult = await userHandler.CreateUser(name, password);
+        Result<Guid> userGuidResult = await userHandler.CreateUser(registerData.Username, registerData.Password);
         if (userGuidResult.HasError(error => error.Metadata["ErrorCode"].Equals("409")))
         {
-            return Conflict($"A user with the name {name} already exists");
+            return Conflict($"A user with the name {registerData.Username} already exists");
         }
         
         Result<Guid> folderGuidResult = await folderHandler.CreateUserRoot(userGuidResult.Value);
@@ -57,7 +54,13 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
         {
             
         }
-        return Created("", userGuidResult.Value);
+        
+        Result<string> bearerResult = await userHandler.Login(userGuidResult.Value, registerData.Password);
+        
+        if (bearerResult.IsFailed)
+            return Unauthorized();
+        
+        return Created("/home", bearerResult.Value);
     }
 
     [HttpPost("login")]
@@ -66,23 +69,19 @@ public class UserController (IUserHandler userHandler, IFolderHandler folderHand
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Login(
-        [FromForm, BindRequired] string name,
-        [FromForm, BindRequired, SwaggerSchema(Format = "password")]
-        string password
-        )
+    public async Task<IActionResult> Login([FromBody] UserLogin loginData)
     {
-        if (string.IsNullOrEmpty(name)
-            || string.IsNullOrEmpty(password))
+        if (string.IsNullOrEmpty(loginData.Username)
+            || string.IsNullOrEmpty(loginData.Password))
             return BadRequest();
         
-        Result<UserDto> userResult = await userHandler.GetUser(name);
+        Result<UserDto> userResult = await userHandler.GetUser(loginData.Username);
         userResult.Log();
         
         if (userResult.IsFailed)
             return NotFound();
         
-        Result<string> bearerResult = await userHandler.Login(userResult.Value.UserId, password);
+        Result<string> bearerResult = await userHandler.Login(userResult.Value.UserId, loginData.Password);
         
         if (bearerResult.IsFailed)
             return Unauthorized();

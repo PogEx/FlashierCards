@@ -1,7 +1,6 @@
 ﻿@page "/login"
 @layout AnonymousLayout
 @rendermode InteractiveServer
-@inject NavigationManager navManager
 
 <PageTitle>Login</PageTitle>
 
@@ -11,13 +10,13 @@
             <h1 class="card-title text-center">Login</h1>
             <form>
                 <div class="form-group mt-3 mb-3">
-                    <input type="email" class="form-control" id="email" placeholder="Enter Your username">
+                    <input type="text" class="form-control" id="email" placeholder="Enter Your username" @bind="_loginData.Username">
                 </div>
                 <div class="form-group mt-3 mb-3">
-                    <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" @bind="_loginData.Password">
                 </div>
                 <div>
-                    <button type="button" class="btn btn-primary btn-block w-50">
+                    <button type="button" class="btn btn-primary btn-block w-50" @onclick="LoginUser">
                         <span class="material-symbols-outlined align-middle" style="color: var(--bs-body-color)">
                             login
                         </span>
@@ -33,10 +32,3 @@
     </div>
 </div>
 
-@code
-{
-    private void GotoSignup()
-    {
-        navManager.NavigateTo("/signup");
-    }
-}

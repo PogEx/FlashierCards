@@ -11,16 +11,16 @@
             <h1 class="card-title text-center">Signup</h1>
             <form>
                 <div class="form-group mt-3 mb-3">
-                    <input type="email" class="form-control" id="email" placeholder="Enter Your username">
+                    <input type="email" class="form-control" id="text" placeholder="Enter Your username" @bind="_registerData.Username">
                 </div>
                 <div class="form-group mt-3 mb-3">
-                    <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" @bind="_registerData.Password">
                 </div>
                 <div class="form-group mt-3 mb-3">
-                    <input type="password" class="form-control" id="password-ensure" placeholder="Enter your password again">
+                    <input type="password" class="form-control" id="password-ensure" placeholder="Enter your password again" @bind="_registerData.ConfirmPassword">
                 </div>
                 <div>
-                    <button type="button" class="btn btn-primary btn-block w-50">
+                    <button type="button" class="btn btn-primary btn-block w-50" @onclick="RegisterUser">
                         <span class="material-symbols-outlined align-middle" style="color: var(--bs-body-color)">
                             add
                         </span>
