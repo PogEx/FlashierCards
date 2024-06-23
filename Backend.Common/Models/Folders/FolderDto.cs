@@ -13,6 +13,8 @@ public struct FolderDto
     public bool IsRoot { get; set; } = false;
 
     public string Name { get; set; } = null!;
+    
+    public string Color { get; set; }
 
     public Guid? ParentId { get; set; } = null!;
 

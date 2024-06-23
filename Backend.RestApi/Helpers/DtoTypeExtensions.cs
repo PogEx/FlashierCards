@@ -35,6 +35,7 @@ public static class DtoTypeExtensions
             IsRoot = folder.IsRoot,
             Name = folder.Name,
             ParentId = folder.ParentId,
+            Color = folder.ColorHex,
             ChildrenIds = folder.Children.Select(f => f.FolderId),
             DeckIds = folder.Decks.Select(d => d.DeckId),
             IsEmpty = folder.Children.Count + folder.Decks.Count == 0

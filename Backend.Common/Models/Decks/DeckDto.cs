@@ -1,6 +1,6 @@
 ﻿namespace Backend.Common.Models.Decks;
 
-public class DeckDto
+public struct DeckDto
 {
     
     public DeckDto(){}

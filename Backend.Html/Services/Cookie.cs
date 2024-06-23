@@ -16,7 +16,7 @@ namespace Backend.Html.Services
         public Cookie(IJSRuntime jsRuntime)
         {
             JSRuntime = jsRuntime;
-            ExpireDays = 300;
+            ExpireDays = 30;
         }
 
         public async Task SetValue(string key, string value, int? days = null)

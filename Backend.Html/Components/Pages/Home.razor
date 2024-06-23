@@ -1,4 +1,6 @@
 ﻿@page "/home"
+@using Backend.Common.Models.Decks
+@using Backend.Common.Models.Folders
 @rendermode InteractiveServer
 @inject NavigationManager navManager
 
@@ -20,17 +22,12 @@
         <div class="col d-flex flex-wrap">
             @for(int i = 0; i < 100; i++)
             {
-                <div class="d-flex align-items-center justify-content-center folder m-2" style="width: 10rem; height: 7rem;">
-                    <div>Folder @i  </div>
-                </div>
-                
+                <FolderComponent Folder="new FolderDto(){}"></FolderComponent>
             }
 
             @for(int i = 0; i < 10; i++)
             {
-                <div class="d-flex align-items-center justify-content-center deck m-2 " style="width: 10rem; height:  7rem;">
-                    <div>Deck</div>
-                </div>
+                <DeckComponent Deck="new DeckDto(){}"></DeckComponent>
             }
 
             <div class="btn-group dropup position-fixed bottom-0 end-0 mb-5 me-5">
