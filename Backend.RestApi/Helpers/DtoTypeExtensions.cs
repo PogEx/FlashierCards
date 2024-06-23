@@ -36,8 +36,8 @@ public static class DtoTypeExtensions
             Name = folder.Name,
             ParentId = folder.ParentId,
             Color = folder.ColorHex,
-            ChildrenIds = folder.Children.Select(f => f.FolderId),
-            DeckIds = folder.Decks.Select(d => d.DeckId),
+            ChildrenIds = folder.Children.Select(f => f.ToDto()),
+            DeckIds = folder.Decks.Select(d => d.ToDto()),
             IsEmpty = folder.Children.Count + folder.Decks.Count == 0
         };
     }

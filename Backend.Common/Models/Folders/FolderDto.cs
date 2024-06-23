@@ -1,25 +1,23 @@
-﻿namespace Backend.Common.Models.Folders;
+﻿using Backend.Common.Models.Decks;
 
-public struct FolderDto
+namespace Backend.Common.Models.Folders;
+
+public class FolderDto
 {
-    public FolderDto()
-    {
-    }
+    public Guid FolderId { get; set; }
 
-    public Guid FolderId { get; set; } = default;
+    public Guid UserId { get; set; }
 
-    public Guid UserId { get; set; } = default;
+    public bool IsRoot { get; set; }
 
-    public bool IsRoot { get; set; } = false;
-
-    public string Name { get; set; } = null!;
+    public required string Name { get; set; }
     
-    public string Color { get; set; }
+    public required string Color { get; set; }
 
-    public Guid? ParentId { get; set; } = null!;
+    public Guid? ParentId { get; set; }
 
-    public IEnumerable<Guid> ChildrenIds { get; set; } = new List<Guid>();
-    public IEnumerable<Guid> DeckIds { get; set; } = new List<Guid>();
+    public IEnumerable<FolderDto> ChildrenIds { get; set; } = new List<FolderDto>();
+    public IEnumerable<DeckDto> DeckIds { get; set; } = new List<DeckDto>();
 
     public bool IsEmpty { get; set; } = true;
 }

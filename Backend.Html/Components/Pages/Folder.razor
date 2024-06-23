@@ -1,11 +1,22 @@
-﻿@page "/home"
+﻿@page "/folder"
 @using Backend.Common.Models.Decks
 @using Backend.Common.Models.Folders
 @rendermode InteractiveServer
 @inject NavigationManager navManager
+@inject RestClientProvider clientProvider
 
 
 <PageTitle>Home</PageTitle>
+
+<style>
+    .folder{
+        background-color: var(--bs-primary);
+    }
+    .deck{
+        background-color: var(--bs-secondary);
+    }
+</style>
+
 
 <div class="container-lg my-5">
     <div class="row">

@@ -1,10 +1,7 @@
 ﻿namespace Backend.Common.Models.Decks;
 
-public struct DeckDto
+public class DeckDto
 {
-    
-    public DeckDto(){}
-
-    public Guid DeckId { get; set; } = default;
-    public string Name { get; set; } = null!;
+    public Guid DeckId { get; set; }
+    public required string Name { get; set; }
 }
