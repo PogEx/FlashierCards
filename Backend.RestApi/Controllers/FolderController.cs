@@ -11,7 +11,7 @@ namespace Backend.RestApi.Controllers;
 [Route("folder")]
 [Controller]
 [Authorize]
-public class FolderController(IFolderHandler folderHandler, IDeckHandler deckHandler) : Controller
+public class FolderController(IFolderHandler folderHandler) : Controller
 {
     [HttpPost]
     public async Task<IActionResult> CreateFolder(
@@ -42,28 +42,14 @@ public class FolderController(IFolderHandler folderHandler, IDeckHandler deckHan
         return Ok();
     }
     
-    [HttpGet("userroot")]
-    public async Task<IActionResult> GetUserRoot()
-    {
-        return Ok((await folderHandler.GetUserRoot(
-            User.GetCurrentUser())).Value);
-    }
-    
-    [HttpGet("content")]
-    public async Task<IActionResult> GetContent(
-        [FromQuery(Name = "Id"), BindRequired] Guid guid)
-    {
-        return Ok(/*await deckHandler*/);
-    }
-
     [HttpGet]
     [SwaggerResponse(200, null, typeof(FolderDto))]
     public async Task<IActionResult> GetFolder(
-        [FromQuery(Name = "id"), BindRequired] Guid guid)
+        [FromQuery(Name = "id")] Guid guid)
     {
-        
         return Ok((await folderHandler.GetFolder(
-            User.GetCurrentUser(), 
-            guid)).Value);
+            User.GetCurrentUser(),
+            guid
+        )).Value);
     }
 }

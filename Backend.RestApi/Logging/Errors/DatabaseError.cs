@@ -1,11 +1,13 @@
 ﻿using FluentResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.RestApi.Logging.Errors;
 
-public class DatabaseError:Error
+public class DatabaseError: Error
 {
-    public DatabaseError():base("A database error has occured")
+    public DatabaseError(DbUpdateException e):base("A database error has occured")
     {
+        CausedBy(e);
         Metadata.Add("ErrorCode", "503");
     }
 }

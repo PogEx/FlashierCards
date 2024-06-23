@@ -4,7 +4,7 @@ using Backend.Common.Models.Folders;
 using Backend.Common.Models.Users;
 using Backend.Database.Database.DatabaseModels;
 
-namespace Backend.RestApi.Helpers;
+namespace Backend.RestApi.Helpers.Extensions;
 
 public static class DtoTypeExtensions
 {
@@ -13,7 +13,8 @@ public static class DtoTypeExtensions
         return new DeckDto
         {
             DeckId = deck.DeckId,
-            Name = deck.DeckTitle
+            Name = deck.DeckTitle,
+            Cards = deck.Cards.Select(c => c.CardId).ToList()
         };
     }
     

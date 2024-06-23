@@ -2,13 +2,11 @@
 
 public static class StringHelpers
 {
-    private static Random _random;
-
     public static string RandomString(int length, int seed)
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        _random = new Random(seed);
+        Random random = new(seed);
         return new string(Enumerable.Repeat(chars, length)
-            .Select(s => s[_random.Next(s.Length)]).ToArray());
+            .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 }
