@@ -36,5 +36,8 @@
         <DependentUpon>App.razor</DependentUpon>
       </Compile>
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="configs\" />
+    </ItemGroup>
 
 </Project>

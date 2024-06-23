@@ -10,38 +10,32 @@
 
 <div class=" d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle">
     <div class="row">
-        <div class="col-sm-6 mb-3 mb-sm-0">
-            <div class="card text-white bg-secondary mb-3 ">
-                <div class="card-body " style="width: 24rem; height: 18rem">
-                    <div class="card-header">Question</div>
-                    <form>
-                        <div class="mt-4">
-                            <input class="form-control from-control-lg h-1000" id="inputText" placeholder="Please write down a question">
-                        </div>
-                    </form>
-                    
+        <CreateCardComponent Title="Question"></CreateCardComponent>
+        @if (!withback)
+        {
+            <div class="col-sm-6">
+                <div class="card text-center align-content-center bg-secondary mb-3">
+                    <div class="card-body d-flex justify-content-center align-items-center" style="width: 24rem; height: 18rem;">
+                        <form>
+                            <button @onclick="Button_click" class="btn btn-secondary rounded-circle btn-circle" style="aspect-ratio: 1/1;" name="name" value="add">
+                                <span class="material-symbols-outlined align-middle">
+                                    add
+                                </span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="card text-white bg-secondary mb-3 ">
-                <div class="card-body" style="width: 24rem; height: 18rem">
-                    <div class="card-header">Answer</div>
-                    <form>
-                        <div class="mt-4">
-                            <input class="form-control from-control-lg h-1000" id="inputText" placeholder="Please write down the answer">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        }
+        else
+        {
+        <CreateCardComponent Title="Answer"></CreateCardComponent>
+        }
     </div>
 </div>
 
-<div class="btn-group dropup">
-    <button class="btn btn-success position-fixed bottom-0 end-0 mb-5 me-5 rounded-circle" data-bs-toggle="dropdown" alt="75x75">
-        <span class="material-symbols-outlined fix ">
-            check
-        </span>
-    </button>
-</div>
+<button class="btn btn-success position-absolute top-100 start-50 translate-middle rounded-circle">
+    <span class="material-symbols-outlined fix">
+        check
+    </span>
+</button>
