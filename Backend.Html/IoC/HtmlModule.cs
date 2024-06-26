@@ -8,9 +8,7 @@ public class HtmlModule: Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<AuthorizationProvider>().As<IAuthorizationHandler>();
-        builder.RegisterType<ThemeService>().As<IThemeService>().SingleInstance();
-        builder.RegisterType<RestClientProvider>().As<IRestClientProvider>().SingleInstance();
-        builder.RegisterType<Cookie>().As<ICookie>();
+        builder.RegisterType<AuthorizationProvider>().As<IAuthorizationHandler>().SingleInstance();
+        builder.RegisterType<RestClientProvider>().As<IRestClientProvider>();
     }
 }

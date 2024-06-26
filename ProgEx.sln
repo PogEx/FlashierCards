@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Database", "Backend
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Html", "Backend.Html\Backend.Html.csproj", "{4ECC1832-260F-41F0-8605-4E85445E75B6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend.Restart", "Backend.Restart\Backend.Restart.csproj", "{340CCF10-3F85-484F-953D-E778A5D101DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{4ECC1832-260F-41F0-8605-4E85445E75B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4ECC1832-260F-41F0-8605-4E85445E75B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4ECC1832-260F-41F0-8605-4E85445E75B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{340CCF10-3F85-484F-953D-E778A5D101DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{340CCF10-3F85-484F-953D-E778A5D101DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{340CCF10-3F85-484F-953D-E778A5D101DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{340CCF10-3F85-484F-953D-E778A5D101DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AB6E0C4A-57DD-4930-ABE2-11F3055A0CCC} = {6306DF9D-6E28-49DA-8440-C2D7F1528175}

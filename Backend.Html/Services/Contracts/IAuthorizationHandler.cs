@@ -4,5 +4,6 @@ namespace Backend.Html.Services.Contracts;
 
 public interface IAuthorizationHandler
 {
-    Task Login(UserLogin login);
+    Task<bool> Login(UserLogin login);
+    Task<string> GetToken();
 }

@@ -56,22 +56,18 @@ public class UserController (IUserHandler userHandler) : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Login(
-        [FromForm, BindRequired] string name,
-        [FromForm, BindRequired, SwaggerSchema(Format = "password")]
-        string password
-        )
+    public async Task<IActionResult> Login([FromBody, BindRequired] UserLogin loginData)
     {
-        if (string.IsNullOrEmpty(name)
-            || string.IsNullOrEmpty(password))
+        if (string.IsNullOrEmpty(loginData.Username)
+            || string.IsNullOrEmpty(loginData.Password))
             return BadRequest();
         
-        Result<UserDto> userResult = await userHandler.GetUser(name);
+        Result<UserDto> userResult = await userHandler.GetUser(loginData.Username);
         
         if (userResult.IsFailed)
             return NotFound();
         
-        Result<string> bearerResult = await userHandler.Login(userResult.Value.UserId, password);
+        Result<string> bearerResult = await userHandler.Login(userResult.Value.UserId, loginData.Password);
         
         if (bearerResult.IsFailed)
             return Unauthorized();

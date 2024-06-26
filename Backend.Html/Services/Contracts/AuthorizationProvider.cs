@@ -1,20 +1,28 @@
 ﻿using Backend.Common.Models.Users;
+using Microsoft.AspNetCore.Components;
 using RestSharp;
 
 namespace Backend.Html.Services.Contracts;
 
-public class AuthorizationProvider(IRestClientProvider RestClientProvider, ICookie cookie) : IAuthorizationHandler
+public class AuthorizationProvider(IRestClientProvider restClientProvider, NavigationManager navigationManager) : IAuthorizationHandler
 {
-    public async Task Login(UserLogin loginData)
+    private string Bearer { get; set; } = "";
+    public async Task<bool> Login(UserLogin loginData)
     {
         RestRequest request = new("/user/login", Method.Post);
         request.AddBody(loginData, ContentType.Json);
 
-        IRestClient client = await RestClientProvider.GetRestClient();
+        IRestClient client = await restClientProvider.GetRestClient();
         RestResponse response = await client.PostAsync(request);
-        
-        if(response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
-            await cookie.SetValue("token", response.Content, 1);
-        
+        Bearer = response.Content ?? "";
+        return response.IsSuccessful;
+    }
+
+    public Task<string> GetToken()
+    {
+        if(string.IsNullOrEmpty(Bearer))
+            navigationManager.NavigateTo("/login");
+
+        return Task.FromResult(Bearer);
     }
 }

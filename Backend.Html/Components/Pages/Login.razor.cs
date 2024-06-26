@@ -14,6 +14,9 @@ public partial class Login
 
     private async Task LoginUser()
     {
-        await AuthorizationHandler.Login(_loginData);
+        if (await AuthorizationHandler.Login(_loginData))
+        {
+            NavManager.NavigateTo("/folder");
+        }
     }
 }

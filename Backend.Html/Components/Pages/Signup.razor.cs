@@ -1,5 +1,4 @@
 ﻿using Backend.Common.Models.Users;
-using Backend.Html.Services;
 using Backend.Html.Services.Contracts;
 using Microsoft.AspNetCore.Components;
 using RestSharp;
@@ -10,8 +9,6 @@ public partial class Signup
 {
     [Inject] private NavigationManager NavManager { get; set; }
     [Inject] private IRestClientProvider RestClientProvider { get; set; }
-    
-    [Inject] private ICookie _cookie { get; set; }
 
     private UserRegister _registerData = new();
 
@@ -22,12 +19,5 @@ public partial class Signup
 
         IRestClient client = await RestClientProvider.GetRestClient();
         RestResponse response = await client.PostAsync(request);
-
-        if (response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
-        {
-            await _cookie.SetValue("token", response.Content, 1);
-            NavManager.NavigateTo(response.ResponseUri.ToString());
-        }
-            
     }
 }

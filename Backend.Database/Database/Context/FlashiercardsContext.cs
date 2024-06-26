@@ -7,17 +7,13 @@ namespace Backend.Database.Database.Context;
 
 public class FlashiercardsContext : DbContext
 {
-    private readonly DbConfig _configuration;
-    
-    public FlashiercardsContext(IConfiguration configuration = null)
+    public FlashiercardsContext()
     {
-        _configuration = configuration.GetSection("ConnectionStrings").Get<DbConfig>() ?? new DbConfig();
     }
 
-    public FlashiercardsContext(DbContextOptions<FlashiercardsContext> options, IConfiguration configuration = null)
+    public FlashiercardsContext(DbContextOptions<FlashiercardsContext> options)
         : base(options)
     {
-        _configuration = configuration.GetSection("ConnectionStrings").Get<DbConfig>() ?? new DbConfig();
     }
 
     public virtual DbSet<Card> Cards { get; set; }
@@ -33,10 +29,7 @@ public class FlashiercardsContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserSetting> UserSettings { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySql(_configuration.Mysqldb, ServerVersion.Parse("8.4.0-mysql"));
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
