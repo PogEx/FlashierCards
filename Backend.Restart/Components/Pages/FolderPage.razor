@@ -1,6 +1,7 @@
 ﻿@page "/"
 @page "/folder/{FolderId}"
 @using Backend.Database.Database.DatabaseModels
+@using Microsoft.CodeAnalysis.CSharp.Syntax
 @rendermode InteractiveServer
 
 
@@ -9,7 +10,6 @@
 <style>
 
 </style>
-
 
 <div class="container-lg my-5">
     <div class="row">
@@ -27,6 +27,7 @@
             {
                 <DeckComponent Deck="deck"></DeckComponent>
             }
+            
             <div class="col-2">
                 <a class="btn" @onclick="CreateFolder">
                     <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#e8eaed">
