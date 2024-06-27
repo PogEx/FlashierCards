@@ -37,8 +37,8 @@ public partial class FolderPage : ComponentBase
             
             FolderId = folder.FolderId.ToString();
             Name = folder.Name;
-            folders = folder.Children.ToList();
-            decks = folder.Decks.ToList();
+            folders = folder.Children.OrderBy(f => f.Name.Length).ThenBy(f => f.Name).ToList();
+            decks = folder.Decks.OrderBy(f => f.DeckTitle.Length).ThenBy(f => f.DeckTitle).ToList();
         }
     }
     
