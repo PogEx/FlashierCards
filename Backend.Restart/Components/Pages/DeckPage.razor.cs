@@ -22,7 +22,6 @@ public partial class DeckPage : ComponentBase
             Cards = deck.Cards.Where(c => c.BackId != null).ToList();
         }
     }
-    
     private async Task CreateCard()
     {
         Card card = new()
@@ -43,7 +42,6 @@ public partial class DeckPage : ComponentBase
             Type = 2,
             UserId = Guid.Parse("e87f8052-cf90-43e4-900d-b75239d4b08f")
         };
-        
         
         Cards.Add(frontCard);
         
