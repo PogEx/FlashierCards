@@ -1,6 +1,7 @@
 ﻿@page "/"
 @page "/folder/{FolderId}"
 @using Backend.Database.Database.DatabaseModels
+@using Backend.Restart.Models
 @using Microsoft.CodeAnalysis.CSharp.Syntax
 @rendermode InteractiveServer
 
@@ -18,9 +19,9 @@
             <p>Nothing here!</p>
         }
         <div class="col d-flex flex-wrap">
-            @foreach (Folder folder in folders)
+            @foreach (FolderGhostContainer container in folders)
             {
-                <FolderComponent Folder="folder"></FolderComponent>
+                <FolderComponent Container="container"></FolderComponent>
             }
 
             @foreach (Deck deck in decks)

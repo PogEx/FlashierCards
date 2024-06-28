@@ -1,5 +1,7 @@
-﻿using Backend.Database.Database.Context;
+﻿using Backend.Common.Extensions;
+using Backend.Database.Database.Context;
 using Backend.Database.Database.DatabaseModels;
+using Backend.Restart.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +13,7 @@ public partial class FolderPage : ComponentBase
     
     [Parameter] public string FolderId { get; set; }
     private string Name;
-    private List<Folder> folders = new();
+    private List<FolderGhostContainer> folders = new();
     private List<Deck> decks = new();
 
     protected override async Task OnInitializedAsync()
@@ -37,7 +39,11 @@ public partial class FolderPage : ComponentBase
             
             FolderId = folder.FolderId.ToString();
             Name = folder.Name;
-            folders = folder.Children.OrderBy(f => f.Name.Length).ThenBy(f => f.Name).ToList();
+            folders = folder.Children
+                .OrderBy(f => f.Name.Length)
+                .ThenBy(f => f.Name)
+                .MapTo(f => new FolderGhostContainer{Folder = f})
+                .ToList();
             decks = folder.Decks.OrderBy(f => f.DeckTitle.Length).ThenBy(f => f.DeckTitle).ToList();
         }
     }
@@ -55,7 +61,7 @@ public partial class FolderPage : ComponentBase
             ColorHex = "FFFFFF", //TODO set color to entered color
             UserId = Guid.Parse("e87f8052-cf90-43e4-900d-b75239d4b08f")
         };
-        folders.Add(folder);
+        folders.Add(new(){Folder = folder, GhostComponent = true});
         
         using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
         {
@@ -63,6 +69,9 @@ public partial class FolderPage : ComponentBase
             await context.SaveChangesAsync();
         }
     }
+    
+    
+    
     private async Task CreateDeck()
     {
         //Open Name and color Form

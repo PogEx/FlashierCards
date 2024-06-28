@@ -6,5 +6,4 @@ namespace Backend.Restart.Components;
 public partial class CardComponent : ComponentBase
 {
     [Parameter] public Card Card { get; set; }
-    
 }
