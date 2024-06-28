@@ -1,14 +1,15 @@
-@page "/Create/Card"
+@page "/Edit/"
+@using Backend.Database.Database.DatabaseModels
 @rendermode InteractiveServer
 
-<PageTitle>Create Card</PageTitle>
+<PageTitle>Edit Card</PageTitle>
 
 <div class="d-flex justify-content-center align-items-center position-relative" style="height: 100vh; flex-direction: column;">
     <div class="card-body d-flex justify-content-center align-items-center" style="width: 54rem; height: 18rem; margin-bottom: 0;">
-        <CreateCardComponent Title="Question"></CreateCardComponent>
+        <EditCardComponent Title="Question"></EditCardComponent>
     </div>
     <div class="card-body d-flex justify-content-center align-items-center" style="width: 54rem; height: 18rem; margin-top: 0;">
-        <CreateCardComponent Title="Answer"></CreateCardComponent>
+        <EditCardComponent Title="Answer"></EditCardComponent>
     </div>
     <button class="btn btn-success position-absolute top-75 start-50 translate-middle-y rounded-circle">
         <span class="material-symbols-outlined fix">
@@ -16,4 +17,3 @@
         </span>
     </button>
 </div>
-
