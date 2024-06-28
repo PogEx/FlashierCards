@@ -1,39 +1,32 @@
 using Backend.Database.Database.DatabaseModels;
 using Microsoft.AspNetCore.Components;
-
 namespace Backend.Restart.Components.Pages;
+
+
 
 public partial class CardView : ComponentBase
 {
-    private bool showFront = true;
-    private Card frontCard = new Card();
-    private Card backCard = new Card();
-    private async void ShowCard()
-    {
-        frontCard = new Card()
-         {
-            // Deck = Card
-             //user deck cardid
-             
-             
-         };
-        
-        backCard = new Card()
-        {
-
-        };
-        
-        
-    }
+    [Parameter] public Card card { get; set; }
+    [Parameter] public String CardId { get; set; }
     
-    public void ShowBackSide()
+    
+    private bool showFront = true;
+    private Card frontCard = new Card { Title = "Question", Content = "This is the front of the card." };
+    private Card backCard = new Card { Title = "Answer", Content = "This is the back of the card." };
+
+    protected override async Task OnInitializedAsync()
     {
-        showFront = false;
+        
     }
 
-    public void ShowFrontSide()
+    private void ToggleCard()
     {
-        showFront = true;
+        showFront = !showFront;
     }
 
+    public class Card
+    {
+        public string Title { get; set; }
+        public string Content { get; set; }
+    }
 }
