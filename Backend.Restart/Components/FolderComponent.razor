@@ -2,19 +2,19 @@
     @if (Container.GhostComponent)
     {
         <div class="btn">
-            <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 0 24 24" width="100%" fill="#@Container.Folder.ColorHex">
+            <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 0 24 24" width="100%" fill="#@Container.Payload.ColorHex">
                 <path d="M0 0h24v24H0z" fill="none"/><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
             </svg>
-            <input type="text" id="fname" name="fname" @bind="Container.Folder.Name" @onkeyup="SubmitFolderName">
+            <InputText type="text" id="fname" name="fname" @ref="_inputField" @bind-Value="Container.Payload.Name" @onkeyup="SubmitFolderName" @onblur="lostFocus"/>
         </div>
     }
     else
     {
-        <a class="btn" href="/folder/@Container.Folder.FolderId">
-            <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 0 24 24" width="100%" fill="#@Container.Folder.ColorHex">
+        <a class="btn" href="/folder/@Container.Payload.FolderId">
+            <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 0 24 24" width="100%" fill="#@Container.Payload.ColorHex">
                 <path d="M0 0h24v24H0z" fill="none"/><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
             </svg>
-            <label>@Container.Folder.Name</label>
+            <label>@Container.Payload.Name</label>
         </a>
     }
 </div>

@@ -2,9 +2,8 @@
 
 namespace Backend.Restart.Models;
 
-public class FolderGhostContainer
+public class GhostContainer<T>
 {
-    public Folder Folder { get; set; }
-    
+    public T Payload { get; set; }
     public bool GhostComponent { get; set; } = false;
 }

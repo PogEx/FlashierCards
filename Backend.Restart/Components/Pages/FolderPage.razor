@@ -18,14 +18,14 @@
             <p>Nothing here!</p>
         }
         <div class="col d-flex flex-wrap">
-            @foreach (FolderGhostContainer container in folders)
+            @foreach (GhostContainer<Folder> container in folders)
             {
                 <FolderComponent Container="container"></FolderComponent>
             }
 
-            @foreach (Deck deck in decks)
+            @foreach (GhostContainer<Deck> container in decks)
             {
-                <DeckComponent Deck="deck"></DeckComponent>
+                <DeckComponent Container="container"></DeckComponent>
             }
             
             <div class="col-2">
