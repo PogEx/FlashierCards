@@ -2,7 +2,6 @@ using Backend.Database.Database.Context;
 using Backend.Database.Database.DatabaseModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Backend.Restart.Components.Pages;
 
@@ -10,31 +9,30 @@ namespace Backend.Restart.Components.Pages;
 
 public partial class CardView : ComponentBase
 {
-    [Parameter] public Card frontCard { get; set; }
-
-    [Parameter] public Card backCard { get; set; }
-
-    [Parameter] public String CardId { get; set; }
-
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
+    private Card? FrontCard { get; set; }
 
-    private bool showFront = true;
+    private Card? BackCard { get; set; }
+
+    [Parameter] public string? CardId { get; set; }
+
+
+    private bool _showFront = true;
 
     protected override async Task OnInitializedAsync()
     {
         using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
         {
-            Guid cardGuid = Guid.Parse(CardId);
-            frontCard = await context.Cards
+            FrontCard = await context.Cards
                 .Include(c => c.BackCard)
-                .FirstAsync(c => c.CardId == cardGuid);
-
-            backCard = frontCard.BackCard;
+                .FirstAsync(c => c.CardId == Guid.Parse(CardId));
+            
+            BackCard = FrontCard?.BackCard;
         }
     }
 
     private void ToggleCard()
     {
-        showFront = !showFront;
+        _showFront = !_showFront;
     }
 }

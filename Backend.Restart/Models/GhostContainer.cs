@@ -1,5 +1,4 @@
-﻿using Backend.Database.Database.DatabaseModels;
-
+﻿
 namespace Backend.Restart.Models;
 
 public class GhostContainer<T>

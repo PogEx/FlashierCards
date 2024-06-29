@@ -5,13 +5,13 @@
 <div class="d-flex justify-content-center align-items-center position-relative" style="height: calc(100vh - 100px); flex-direction: column; margin-top: 50px;">
     <div class="d-flex flex-column justify-content-center align-items-center" style="width: 54rem; margin-bottom: 20px;">
         <button @onclick="ToggleCard">
-            <CardViewComponent>@frontCard.Text</CardViewComponent>
+            <CardViewComponent>@FrontCard?.CardId</CardViewComponent>
         </button>
     </div>
-    @if (showFront == false)
+    @if (!_showFront)
     {
         <div class="d-flex justify-content-center align-items-center" style="width: 54rem; margin-top: 20px;">
-            <CardViewComponent>@backCard.Text</CardViewComponent>
+            <CardViewComponent>@BackCard?.CardId</CardViewComponent>
         </div>
     }
 </div>

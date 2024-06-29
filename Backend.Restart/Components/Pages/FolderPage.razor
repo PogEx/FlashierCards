@@ -2,7 +2,6 @@
 @page "/folder/{FolderId}"
 @using Backend.Database.Database.DatabaseModels
 @using Backend.Restart.Models
-@using Microsoft.CodeAnalysis.CSharp.Syntax
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
@@ -13,17 +12,17 @@
 
 <div class="container-lg my-5">
     <div class="row">
-        @if (folders.Count == 0 && decks.Count == 0)
+        @if (_folders.Count == 0 && _decks.Count == 0)
         {
             <p>Nothing here!</p>
         }
         <div class="col d-flex flex-wrap">
-            @foreach (GhostContainer<Folder> container in folders)
+            @foreach (GhostContainer<Folder> container in _folders)
             {
                 <FolderComponent Container="container"></FolderComponent>
             }
 
-            @foreach (GhostContainer<Deck> container in decks)
+            @foreach (GhostContainer<Deck> container in _decks)
             {
                 <DeckComponent Container="container"></DeckComponent>
             }

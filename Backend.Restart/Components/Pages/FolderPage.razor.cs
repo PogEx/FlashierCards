@@ -1,6 +1,6 @@
-﻿using Backend.Common.Extensions;
-using Backend.Database.Database.Context;
+﻿using Backend.Database.Database.Context;
 using Backend.Database.Database.DatabaseModels;
+using Backend.Restart.Extensions;
 using Backend.Restart.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +11,10 @@ public partial class FolderPage : ComponentBase
 {
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
     
-    [Parameter] public string FolderId { get; set; }
-    private string Name;
-    private List<FolderGhostContainer> folders = new();
-    private List<Deck> decks = new();
+    [Parameter] public string? FolderId { get; set; }
+    private string _name = "";
+    private List<GhostContainer<Folder>> _folders = new();
+    private List<GhostContainer<Deck>> _decks = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -26,6 +26,7 @@ public partial class FolderPage : ComponentBase
                  folder = await context.Folders
                     .Include(f => f.Children)
                     .Include(f => f.Decks)
+                    .ThenInclude(d => d.Cards)
                     .FirstAsync(folder => folder.IsRoot == true);
             }
             else
@@ -34,17 +35,22 @@ public partial class FolderPage : ComponentBase
                 folder = await context.Folders
                     .Include(f => f.Children)
                     .Include(f => f.Decks)
+                    .ThenInclude(d => d.Cards)
                     .FirstOrDefaultAsync(folder => folder.FolderId == folderGuid);
             }
             
             FolderId = folder.FolderId.ToString();
-            Name = folder.Name;
-            folders = folder.Children
+            _name = folder.Name;
+            _folders = folder.Children
                 .OrderBy(f => f.Name.Length)
                 .ThenBy(f => f.Name)
-                .MapTo(f => new FolderGhostContainer{Folder = f})
+                .MapTo(f => new GhostContainer<Folder>{Payload = f})
                 .ToList();
-            decks = folder.Decks.OrderBy(f => f.DeckTitle.Length).ThenBy(f => f.DeckTitle).ToList();
+            _decks = folder.Decks
+                .OrderBy(d => d.DeckTitle.Length)
+                .ThenBy(d => d.DeckTitle)
+                .MapTo(d => new GhostContainer<Deck>{Payload = d})
+                .ToList();
         }
     }
     
@@ -55,19 +61,13 @@ public partial class FolderPage : ComponentBase
         Folder folder = new()
         {
             FolderId = Guid.NewGuid(),
-            Name = $"Folder {folders.Count + 1}", //TODO enter unique name here
+            Name = $"Folder {_folders.Count + 1}", //TODO enter unique name here
             IsRoot = false,
             ParentId = Guid.Parse(FolderId),
             ColorHex = "FFFFFF", //TODO set color to entered color
             UserId = Guid.Parse("e87f8052-cf90-43e4-900d-b75239d4b08f")
         };
-        folders.Add(new(){Folder = folder, GhostComponent = true});
-        
-        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
-        {
-            context.Folders.Add(folder);
-            await context.SaveChangesAsync();
-        }
+        _folders.Add(new(){Payload = folder, GhostComponent = true});
     }
     
     
@@ -80,15 +80,9 @@ public partial class FolderPage : ComponentBase
         {
             DeckId = Guid.NewGuid(),
             FolderId = Guid.Parse(FolderId),
-            DeckTitle = $"Decks {decks.Count + 1}", //TODO enter name 
+            DeckTitle = $"Decks {_decks.Count + 1}", //TODO enter name 
             UserId = Guid.Parse("e87f8052-cf90-43e4-900d-b75239d4b08f")
         };
-        decks.Add(deck);
-        
-        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
-        {
-            context.Decks.Add(deck);
-            await context.SaveChangesAsync();
-        }
+        _decks.Add(new(){Payload = deck, GhostComponent = true});
     }
 }
