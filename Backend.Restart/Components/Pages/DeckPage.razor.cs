@@ -12,7 +12,7 @@ public partial class DeckPage : ComponentBase
     [Parameter] public string DeckId { get; set; }
     private List<Card> Cards = new();
     
-    protected override async Task OnInitializedAsync()
+    /*protected override async Task OnInitializedAsync()
     {
         using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
         {
@@ -21,7 +21,7 @@ public partial class DeckPage : ComponentBase
                 .FirstAsync(d => d.DeckId == Guid.Parse(DeckId));
             Cards = deck.Cards.Where(c => c.BackId != null).ToList();
         }
-    }
+    }*/
     private async Task CreateCard()
     {
         Card card = new()

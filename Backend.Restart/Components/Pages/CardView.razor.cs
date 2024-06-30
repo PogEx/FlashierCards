@@ -5,12 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Restart.Components.Pages;
 
-
-
 public partial class CardView : ComponentBase
 {
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
+    
+    [Inject] private NavigationManager Navigation { get; set; }
     private Card? FrontCard { get; set; }
+
+    public Boolean edit = false;
 
     private Card? BackCard { get; set; }
 
@@ -18,6 +20,8 @@ public partial class CardView : ComponentBase
 
 
     private bool _showFront = true;
+    private List<Card> _cardList = new List<Card>();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,4 +39,25 @@ public partial class CardView : ComponentBase
     {
         _showFront = !_showFront;
     }
+
+    private void EditCard()
+    {
+            edit = !edit;
+    }
+    
+    private void PreviousCard()
+    {
+        Navigation.NavigateTo("/Card/View/");
+    }
+
+    private async Task NextCard()
+    { 
+        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+        {
+            _cardList = await context.Cards.Where(c => c.DeckId == c.DeckId).ToListAsync();
+        }
+        
+        Navigation.NavigateTo($"/Card/View/{_cardList[1]}");
+    }
+    
 }
