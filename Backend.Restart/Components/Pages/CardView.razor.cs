@@ -1,5 +1,6 @@
 using Backend.Database.Database.Context;
 using Backend.Database.Database.DatabaseModels;
+using Backend.Restart.Extensions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,13 +17,12 @@ public partial class CardView : ComponentBase
 
     private Card? BackCard { get; set; }
 
-    [Parameter] public string? CardId { get; set; }
-
-
+    [Parameter] public required string CardId { get; set; }
+    
     private bool _showFront = true;
+    
     private List<Card> _cardList = new List<Card>();
-
-
+    
     protected override async Task OnInitializedAsync()
     {
         using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
@@ -45,19 +45,30 @@ public partial class CardView : ComponentBase
             edit = !edit;
     }
     
-    private void PreviousCard()
+    private async Task PreviousCard()
     {
-        Navigation.NavigateTo("/Card/View/");
+        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+        {
+            _cardList = await context.Cards.Where(c => c.BackId != null && FrontCard != null  && c.DeckId == FrontCard.DeckId && c.CardId != FrontCard.CardId).ToListAsync();
+        }
+
+        if (_cardList.Count != 0)
+        {
+            Navigation.NavigateTo($"/Card/View/{_cardList.Random().CardId}");
+        }
+
     }
 
     private async Task NextCard()
     { 
         using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
         {
-            _cardList = await context.Cards.Where(c => c.DeckId == c.DeckId).ToListAsync();
+            _cardList = await context.Cards.Where(c => c.BackId != null && FrontCard != null  && c.DeckId == FrontCard.DeckId && c.CardId != FrontCard.CardId).ToListAsync();
         }
-        
-        Navigation.NavigateTo($"/Card/View/{_cardList[1]}");
+
+        if (_cardList.Count != 0)
+        {
+            Navigation.NavigateTo($"/Card/View/{_cardList.Random().CardId}");
+        }
     }
-    
 }
