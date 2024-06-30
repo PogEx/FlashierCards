@@ -15,6 +15,7 @@ public partial class FolderPage : ComponentBase
     private string _name = "";
     private List<GhostContainer<Folder>> _folders = new();
     private List<GhostContainer<Deck>> _decks = new();
+    private Guid? parent;
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,6 +42,7 @@ public partial class FolderPage : ComponentBase
             
             FolderId = folder.FolderId.ToString();
             _name = folder.Name;
+            parent = folder.ParentId;
             _folders = folder.Children
                 .OrderBy(f => f.Name.Length)
                 .ThenBy(f => f.Name)

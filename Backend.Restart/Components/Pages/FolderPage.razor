@@ -11,6 +11,12 @@
 </style>
 
 <div class="container-lg my-5">
+    @if (parent != null)
+    {
+        <div class="position-absolute" style="top: 20px; right: 20px;">
+            <a class=" btn btn-primary" href="/folder/@parent"> Back </a>
+        </div>
+    }
     <div class="row">
         @if (_folders.Count == 0 && _decks.Count == 0)
         {
@@ -26,7 +32,7 @@
             {
                 <DeckComponent Container="container"></DeckComponent>
             }
-            
+
             <div class="col-2">
                 <a class="btn" @onclick="CreateFolder">
                     <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#e8eaed">

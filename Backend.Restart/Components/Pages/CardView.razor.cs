@@ -68,7 +68,6 @@ public partial class CardView : ComponentBase
         {
             Navigation.NavigateTo($"/Card/View/{_cardList.Random().CardId}");
         }
-
     }
 
     private async Task NextCard()
