@@ -29,6 +29,7 @@ public partial class CardView : ComponentBase
         {
             FrontCard = await context.Cards
                 .Include(c => c.BackCard)
+                .Include(c => c.Deck)
                 .FirstAsync(c => c.CardId == Guid.Parse(CardId));
             
             BackCard = FrontCard?.BackCard;
@@ -40,9 +41,20 @@ public partial class CardView : ComponentBase
         _showFront = !_showFront;
     }
 
-    private void EditCard()
+    private Task EditCard()
     {
-            edit = !edit;
+        edit = !edit;
+        return Task.CompletedTask;
+    }
+
+    private async Task SaveCard()
+    {
+        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+        {
+            context.Update(FrontCard);
+            context.Update(BackCard);
+            await context.SaveChangesAsync();
+        }
     }
     
     private async Task PreviousCard()

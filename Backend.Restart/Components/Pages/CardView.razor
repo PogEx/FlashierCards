@@ -1,6 +1,7 @@
 @page "/Card/View/{CardId}"
 @rendermode InteractiveServer
 
+<PageTitle>@FrontCard?.Deck.DeckTitle</PageTitle>
 
 <div class="d-flex justify-content-center align-items-center position-relative" style="height: calc(100vh - 100px); flex-direction: column; margin-top: 50px;">
     <div class="d-flex justify-content-end w-100 px-3" style="position: absolute; top: 20px; right: 20px;">
@@ -17,21 +18,21 @@
     {
         <div class="d-flex flex-column justify-content-center align-items-center" style="width: 54rem; margin-bottom: 20px;">
             
-            <EditCardComponent><textarea class="form-control" id="floatingTextarea2" style="height: 200px">@FrontCard?.CardId</textarea></EditCardComponent>
-            <EditCardComponent><textarea class="form-control" id="floatingTextarea2" style="height: 200px">@BackCard?.CardId</textarea></EditCardComponent>
-            <button @onclick="EditCard" class="btn btn-success" style="margin-left: 10px;">Save Card</button>
+            <EditCardComponent><textarea class="form-control" id="floatingTextarea2" style="height: 200px; resize: none;" @bind="@FrontCard.Text"></textarea></EditCardComponent>
+            <EditCardComponent><textarea class="form-control" id="floatingTextarea2" style="height: 200px; resize: none;" @bind="@BackCard.Text"></textarea></EditCardComponent>
+            <button @onclick="SaveCard" class="btn btn-success">Save Card</button>
         </div>
     }
     else
     {
-        <button @onclick="ToggleCard">
-            <CardViewComponent>@FrontCard?.CardId</CardViewComponent>
-        </button>
+        <a class="btn p-0" @onclick="ToggleCard">
+            <CardViewComponent>@FrontCard?.Text</CardViewComponent>
+        </a>
         @if (!_showFront)
         {
-            <div class="d-flex justify-content-center align-items-center" style="width: 54rem; margin-top: 20px;">
-                <CardViewComponent>@BackCard?.CardId</CardViewComponent>
-            </div>
+            <CardViewComponent>@BackCard?.Text</CardViewComponent>
         }
     }
 </div>
+
+

@@ -80,7 +80,7 @@ public partial class FolderPage : ComponentBase
         {
             DeckId = Guid.NewGuid(),
             FolderId = Guid.Parse(FolderId),
-            DeckTitle = $"Decks {_decks.Count + 1}", //TODO enter name 
+            DeckTitle = $"Deck {_decks.Count + 1}", //TODO enter name 
             UserId = Guid.Parse("e87f8052-cf90-43e4-900d-b75239d4b08f")
         };
         _decks.Add(new(){Payload = deck, GhostComponent = true});

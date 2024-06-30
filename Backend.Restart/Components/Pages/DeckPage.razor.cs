@@ -10,18 +10,20 @@ public partial class DeckPage : ComponentBase
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
     
     [Parameter] public string DeckId { get; set; }
+    private Guid folderId;
     private List<Card> Cards = new();
     
-    /*protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
         {
             Deck deck = await context.Decks
                 .Include(d=> d.Cards)
                 .FirstAsync(d => d.DeckId == Guid.Parse(DeckId));
+            folderId = deck.FolderId;
             Cards = deck.Cards.Where(c => c.BackId != null).ToList();
         }
-    }*/
+    }
     private async Task CreateCard()
     {
         Card card = new()
