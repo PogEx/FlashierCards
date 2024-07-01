@@ -5,16 +5,13 @@
 
 <PageTitle>Deck Page</PageTitle>
 
-<style>
-
-</style>
 
 <div class="container-lg my-5">
     <div class="position-absolute" style="top: 20px; right: 20px;">
         <a class=" btn btn-primary" href="/"> Home </a>
     </div>
     <div class="row">
-        <div class="col d-flex flex-wrap">
+        <div class="col col-10 d-flex flex-wrap">
             @if (Cards.Count == 0)
             {
                 <p>Nothing here!</p>
@@ -34,4 +31,3 @@
         </div>
     </div>
 </div>
-

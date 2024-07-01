@@ -16,12 +16,19 @@
     </div>
     @if (edit)
     {
-        <div class="d-flex flex-column justify-content-center align-items-center" style="width: 54rem; margin-bottom: 20px;">
+        @if (FrontCard is not null && BackCard is not null)
+        {
+            <div class="d-flex flex-column justify-content-center align-items-center" style="width: 54rem; margin-bottom: 20px;">
             
-            <EditCardComponent><textarea class="form-control" id="floatingTextarea2" style="height: 200px; resize: none;" @bind="@FrontCard.Text"></textarea></EditCardComponent>
-            <EditCardComponent><textarea class="form-control" id="floatingTextarea2" style="height: 200px; resize: none;" @bind="@BackCard.Text"></textarea></EditCardComponent>
-            <button @onclick="SaveCard" class="btn btn-success">Save Card</button>
-        </div>
+                <EditCardComponent><textarea class="form-control" id="Textarea" style="height: 200px; resize: none;" @bind="@FrontCard.Text"></textarea></EditCardComponent>
+                <EditCardComponent><textarea class="form-control" id="Textarea1" style="height: 200px; resize: none;" @bind="@BackCard.Text"></textarea></EditCardComponent>
+                <button @onclick="SaveCard" class="btn btn-success">Save Card</button>
+            </div>
+        }
+        else
+        {
+            <p>An Error Occured!</p>
+        }
     }
     else
     {
