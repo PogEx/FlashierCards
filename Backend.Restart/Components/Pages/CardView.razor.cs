@@ -13,15 +13,13 @@ public partial class CardView : ComponentBase
     [Inject] private NavigationManager Navigation { get; set; }
     private Card? FrontCard { get; set; }
 
-    public Boolean edit = false;
-
     private Card? BackCard { get; set; }
 
     [Parameter] public required string CardId { get; set; }
     
     private bool _showFront = true;
     
-    private List<Card> _cardList = new List<Card>();
+    private List<Card> _cardList = new ();
     
     protected override async Task OnInitializedAsync()
     {
@@ -39,12 +37,6 @@ public partial class CardView : ComponentBase
     private void ToggleCard()
     {
         _showFront = !_showFront;
-    }
-
-    private Task EditCard()
-    {
-        edit = !edit;
-        return Task.CompletedTask;
     }
 
     private async Task SaveCard()
