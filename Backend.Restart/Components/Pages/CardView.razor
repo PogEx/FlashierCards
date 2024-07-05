@@ -8,6 +8,7 @@
         <div class="d-flex align-items-center">
             <a href="/Card/Edit/@FrontCard?.CardId" class="btn btn-success">Edit</a>
             <a href="/Deck/@FrontCard?.DeckId" class="btn btn-secondary ml-2">Card List</a>
+            <a @onclick="DeleteCard" class="btn btn-danger">Delete</a>
         </div>
     </div>
     <div class="d-flex justify-content-between w-100" style="position: absolute; top: 50%; transform: translateY(-50%); padding: 0 10rem;">

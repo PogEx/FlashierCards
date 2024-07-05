@@ -1,5 +1,6 @@
 ﻿using Backend.Common.Models.Decks;
 using Backend.Common.Models.Folders;
+using Backend.Html.Services.Contracts;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using RestSharp;
@@ -8,6 +9,9 @@ namespace Backend.Html.Components.Pages;
 
 public partial class Folder : ComponentBase
 {
+    [Inject] private NavigationManager navManager { get; set; }
+    [Inject] private IAuthorizationHandler authHandler { get; set; }
+    [Inject] private IRestClientProvider clientProvider { get; set; }
     private List<FolderDto> children = new();
     private List<DeckDto> decks = new();
     

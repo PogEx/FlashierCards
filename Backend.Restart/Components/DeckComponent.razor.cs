@@ -42,13 +42,20 @@ public partial class DeckComponent : ComponentBase
 
     private async Task SaveToDatabase()
     {
-        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+        try
         {
-            context.Decks.Add(Container.Payload);
-            await context.SaveChangesAsync();
-        }
+            using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+            {
+                context.Decks.Add(Container.Payload);
+                await context.SaveChangesAsync();
+            }
 
-        Container.GhostComponent = false;
+            Container.GhostComponent = false;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private Task OpenRandomCard()

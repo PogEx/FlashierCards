@@ -1,12 +1,17 @@
 <div class="col-3">
-    <div class="card h-100">
-        <div class="card-header">
+    <div class="card me-2 mb-2">
+        <div class="card-header d-flex justify-content-between">
             <ul class="nav nav-pills card-header-pills">
-                <li class="nav-item">
+                <li class="nav-item me-1">
                     <a class="btn btn-success" href="/Card/View/@Card.CardId">Open</a>
                 </li>
                 <li class="nav-item">
                     <a class="btn btn-outline-success" href="/Card/Edit/@Card.CardId">Edit</a>
+                </li>
+            </ul>
+            <ul class="nav nav-pills card-header-pills">
+                <li class="nav-item">
+                    <a class="btn btn-danger" @onclick="DeleteCard">Delete</a>
                 </li>
             </ul>
         </div>

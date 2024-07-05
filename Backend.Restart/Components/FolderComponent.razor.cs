@@ -40,11 +40,19 @@ public partial class FolderComponent : ComponentBase
 
     private async Task SaveToDatabase()
     {
-        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+        try
         {
-            context.Folders.Add(Container.Payload);
-            await context.SaveChangesAsync();
+            using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+            {
+                context.Folders.Add(Container.Payload);
+                await context.SaveChangesAsync();
+            }
+
+            Container.GhostComponent = false;
         }
-        Container.GhostComponent = false;
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 }

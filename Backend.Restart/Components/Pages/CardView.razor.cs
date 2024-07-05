@@ -23,14 +23,21 @@ public partial class CardView : ComponentBase
     
     protected override async Task OnInitializedAsync()
     {
-        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+        try
         {
-            FrontCard = await context.Cards
-                .Include(c => c.BackCard)
-                .Include(c => c.Deck)
-                .FirstAsync(c => c.CardId == Guid.Parse(CardId));
-            
-            BackCard = FrontCard?.BackCard;
+            using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+            {
+                FrontCard = await context.Cards
+                    .Include(c => c.BackCard)
+                    .Include(c => c.Deck)
+                    .FirstAsync(c => c.CardId == Guid.Parse(CardId));
+
+                BackCard = FrontCard?.BackCard;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
         }
     }
 
@@ -41,37 +48,79 @@ public partial class CardView : ComponentBase
 
     private async Task SaveCard()
     {
-        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+        try
         {
-            context.Update(FrontCard);
-            context.Update(BackCard);
-            await context.SaveChangesAsync();
+            using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+            {
+                context.Update(FrontCard);
+                context.Update(BackCard);
+                await context.SaveChangesAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
         }
     }
     
     private async Task PreviousCard()
     {
-        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+        try
         {
-            _cardList = await context.Cards.Where(c => c.BackId != null && FrontCard != null  && c.DeckId == FrontCard.DeckId && c.CardId != FrontCard.CardId).ToListAsync();
-        }
+            using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+            {
+                _cardList = await context.Cards.Where(c =>
+                    c.BackId != null && FrontCard != null && c.DeckId == FrontCard.DeckId &&
+                    c.CardId != FrontCard.CardId).ToListAsync();
+            }
 
-        if (_cardList.Count != 0)
+            if (_cardList.Count != 0)
+            {
+                Navigation.NavigateTo($"/Card/View/{_cardList.Random().CardId}");
+            }
+        }
+        catch (Exception e)
         {
-            Navigation.NavigateTo($"/Card/View/{_cardList.Random().CardId}");
+            Console.WriteLine(e);
         }
     }
 
     private async Task NextCard()
     { 
-        using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+        try
         {
-            _cardList = await context.Cards.Where(c => c.BackId != null && FrontCard != null  && c.DeckId == FrontCard.DeckId && c.CardId != FrontCard.CardId).ToListAsync();
-        }
+            using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+            {
+                _cardList = await context.Cards.Where(c =>
+                    c.BackId != null && FrontCard != null && c.DeckId == FrontCard.DeckId &&
+                    c.CardId != FrontCard.CardId).ToListAsync();
+            }
 
-        if (_cardList.Count != 0)
+            if (_cardList.Count != 0)
+            {
+                Navigation.NavigateTo($"/Card/View/{_cardList.Random().CardId}");
+            }
+        }
+        catch (Exception e)
         {
-            Navigation.NavigateTo($"/Card/View/{_cardList.Random().CardId}");
+            Console.WriteLine(e);
+        }
+    }
+
+    private async Task DeleteCard()
+    {
+        try
+        {
+            using (FlashiercardsContext context = await DbContextFactory.CreateDbContextAsync())
+            {
+                context.Cards.Remove(FrontCard);
+                await context.SaveChangesAsync();
+                Navigation.NavigateTo("/deck/" + FrontCard.DeckId);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
         }
     }
 }

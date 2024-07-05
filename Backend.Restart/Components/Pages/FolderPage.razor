@@ -6,16 +6,35 @@
 
 <PageTitle>Home</PageTitle>
 
-<style>
-
-</style>
-
 <div class="container-lg my-5">
-    @if (parent != null)
+    
+    @if (folder is not null)
     {
-        <div class="position-absolute" style="top: 20px; right: 20px;">
-            <a class=" btn btn-primary" href="/folder/@parent"> Back </a>
-        </div>
+        @if (folder.ParentId != null)
+        {
+            <div class = "container d-flex justify-content-between p-0">
+            <div class=" mt-3">
+                @if (_edit)
+                {
+                    <InputText @bind-Value="folder.Name" @ref="_inputField" @onkeyup="SubmitFolderName" @onblur="lostFocus"></InputText>
+                }
+                else
+                {
+                    <h1 @onclick="() => _edit = !_edit">@folder.Name</h1>
+                }
+            </div>
+            <div class="me-3 mt-3">
+                <a class="btn btn-primary" href="/folder/@folder.ParentId">Back</a>
+                <a class="btn btn-danger" @onclick="DeleteFolder">Delete</a>
+            </div>
+            </div>
+        }
+        else
+        {
+            <div class="mt-3">
+                <h1>@folder.Name</h1>
+            </div>
+        }
     }
     <div class="row">
         @if (_folders.Count == 0 && _decks.Count == 0)
