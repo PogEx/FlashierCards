@@ -1,17 +1,17 @@
 <div class="col-3">
-    <div class="card">
+    <div class="card h-100">
+        <div class="card-header">
+            <ul class="nav nav-pills card-header-pills">
+                <li class="nav-item">
+                    <a class="btn btn-success" href="/Card/View/@Card.CardId">Open</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-success" href="/Card/Edit/@Card.CardId">Edit</a>
+                </li>
+            </ul>
+        </div>
         <div class="card-body">
-            <div class="card-header">
-                <ul class="nav nav-pills card-header-pills">
-                    <li class="nav-item">
-                        <a class="btn btn-success" href="/Card/View/@Card.CardId">Open</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-success" href="/Card/Edit/@Card.CardId">Edit</a>
-                    </li>
-                </ul>
-            </div>
-            <p class="card-text text-truncate" style="max-height: 3rem">@Card.Text</p>
+            <p class="card-text" style="max-height: calc(1.2em * 5); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;">@Card.Text</p>
         </div>
     </div>
 </div>
