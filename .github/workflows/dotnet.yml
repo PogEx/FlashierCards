@@ -24,28 +24,12 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-          
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: './Backend.Html/package-lock.json'
 
       - name: Restore dependencies
         run: dotnet restore
         
-        
-      - name: Npm Install
-        run: npm install
-        working-directory: ./Backend.Html
-        
-      - name: Compile Sass
-        run: npm run sass-prod
-        working-directory: ./Backend.Html
-
       - name: Build
         run: dotnet build --no-restore
 
       - name: Test
         run: dotnet test --no-build --verbosity normal
-

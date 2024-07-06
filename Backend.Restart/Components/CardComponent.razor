@@ -1,0 +1,22 @@
+<div class="col-3">
+    <div class="card me-2 mb-2">
+        <div class="card-header d-flex justify-content-between">
+            <ul class="nav nav-pills card-header-pills">
+                <li class="nav-item me-1">
+                    <a class="btn btn-success" href="/Card/View/@Card.CardId">Open</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-success" href="/Card/Edit/@Card.CardId">Edit</a>
+                </li>
+            </ul>
+            <ul class="nav nav-pills card-header-pills">
+                <li class="nav-item">
+                    <a class="btn btn-danger" @onclick="DeleteCard">Delete</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <p class="card-text" style="max-height: calc(1.2em * 5); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical;">@Card.Text</p>
+        </div>
+    </div>
+</div>

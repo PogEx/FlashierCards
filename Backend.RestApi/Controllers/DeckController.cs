@@ -1,4 +1,6 @@
-﻿using Backend.Common.Models.Decks;
+﻿using Autofac.Features.Indexed;
+using Backend.Common.Models.Decks;
+using Backend.Database.Database.DatabaseModels;
 using Backend.RestApi.Contracts.Content;
 using Backend.RestApi.Helpers.Extensions;
 using FluentResults;
@@ -11,8 +13,9 @@ namespace Backend.RestApi.Controllers;
 [Route("deck")]
 [Controller]
 [Authorize]
-public class DeckController(IDeckHandler deckHandler, IShareable<string> sharable) : Controller
+public class DeckController(IDeckHandler deckHandler, IIndex<Type, IShareable<string>> sharableIndex) : Controller
 {
+    private readonly IShareable<string> _shareable = sharableIndex[typeof(Deck)];
     // GET
     [HttpGet]
     public async Task<IActionResult> GetDeck(
@@ -61,7 +64,7 @@ public class DeckController(IDeckHandler deckHandler, IShareable<string> sharabl
         [FromQuery(Name="folder")] Guid folderId
         )
     {
-        Result<Guid> result = await sharable.Import(User.GetCurrentUser(), folderId, key);
+        Result<Guid> result = await _shareable.Import(User.GetCurrentUser(), folderId, key);
         return Ok(result.Value);
     }
     
@@ -71,7 +74,7 @@ public class DeckController(IDeckHandler deckHandler, IShareable<string> sharabl
         [FromQuery(Name="duration")] int duration = 5
         )
     {
-        Result<string> result = await sharable.Share(User.GetCurrentUser(), id, duration);
+        Result<string> result = await _shareable.Share(User.GetCurrentUser(), id, duration);
         return Ok(result.Value);
     }
 }

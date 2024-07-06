@@ -4,7 +4,7 @@ using Backend.Common.Models.Folders;
 using Backend.Common.Models.Users;
 using Backend.Database.Database.DatabaseModels;
 
-namespace Backend.RestApi.Helpers;
+namespace Backend.RestApi.Helpers.Extensions;
 
 public static class DtoTypeExtensions
 {
@@ -36,8 +36,9 @@ public static class DtoTypeExtensions
             IsRoot = folder.IsRoot,
             Name = folder.Name,
             ParentId = folder.ParentId,
-            ChildrenIds = folder.Children.Select(f => f.FolderId),
-            DeckIds = folder.Decks.Select(d => d.DeckId),
+            Color = folder.ColorHex,
+            ChildrenIds = folder.Children.Select(f => f.ToDto()),
+            DeckIds = folder.Decks.Select(d => d.ToDto()),
             IsEmpty = folder.Children.Count + folder.Decks.Count == 0
         };
     }

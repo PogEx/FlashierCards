@@ -1,0 +1,38 @@
+﻿@page "/signup"
+@layout AnonymousLayout
+@rendermode InteractiveServer
+@inject NavigationManager navManager
+
+<PageTitle>Signup</PageTitle>
+
+<div class="container-sm position-absolute top-50 start-50 translate-middle" style="max-width: 400px">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title text-center">Signup</h1>
+            <form>
+                <div class="form-group mt-3 mb-3">
+                    <input type="email" class="form-control" id="text" placeholder="Enter Your username" @bind="_registerData.Username">
+                </div>
+                <div class="form-group mt-3 mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" @bind="_registerData.Password">
+                </div>
+                <div class="form-group mt-3 mb-3">
+                    <input type="password" class="form-control" id="password-ensure" placeholder="Enter your password again" @bind="_registerData.ConfirmPassword">
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary btn-block w-50" @onclick="RegisterUser">
+                        <span class="material-symbols-outlined align-middle" style="color: var(--bs-body-color)">
+                            add
+                        </span>
+                    </button>
+                    <a href="/login"><button type="button" class="btn btn-secondary btn-block w-25 float-end text-nowrap">
+                        <span class="material-symbols-outlined align-middle" style="color: var(--bs-body-color)">
+                            login
+                        </span>
+                    </button></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

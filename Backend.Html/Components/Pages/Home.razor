@@ -1,7 +1,38 @@
-﻿@page "/"
+﻿@page "/home"
+@using Backend.Common.Models.Decks
+@using Backend.Common.Models.Folders
+@rendermode InteractiveServer
+@inject NavigationManager navManager
+
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container-lg my-5">
+    <div class="row">
+        <div class="col d-flex flex-wrap">
+            @for(int i = 0; i < 100; i++)
+            {
+                <FolderComponent Folder="new FolderDto { Name = null, Color = null }"></FolderComponent>
+            }
 
-Welcome to your new app.
+            @for(int i = 0; i < 10; i++)
+            {
+                <DeckComponent Deck="new DeckDto { Name = null }"></DeckComponent>
+            }
+
+            <div class="btn-group dropup position-fixed bottom-0 end-0 mb-5 me-5">
+                <button type="button" class="btn btn-secondary rounded-circle align-items-center btn-circle" data-bs-toggle="dropdown" style="aspect-ratio: 1/1">
+                    <span class="material-symbols-outlined align-middle ">
+                        add
+                    </span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Create Deck</a> </li>          
+                    <li><a href="#">Create Folder</a> </li>        
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+

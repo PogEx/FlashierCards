@@ -11,11 +11,19 @@ public class Card
 
     public string Text { get; set; } = null!;
     
-    public Guid BackId { get; set; }
+    public Guid? BackId { get; set; }
 
-    public virtual Card Back { get; set; } = null!;
-    public virtual Card Front { get; set; } = null!;
-    
-    public virtual ICollection<Deck> Deck { get; set; } = null!;
+    public Guid DeckId { get; set; }
+
+    public Guid UserId { get; set; }
+
+    public virtual Card? BackCard { get; set; }
+
+    public virtual Deck Deck { get; set; } = null!;
+
+    public virtual Card? FrontCard { get; set; }
+
     public virtual CardType TypeNavigation { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
 }

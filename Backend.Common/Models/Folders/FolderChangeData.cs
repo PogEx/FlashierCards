@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Backend.Common.Models.Folders;
+﻿namespace Backend.Common.Models.Folders;
 
 public class FolderChangeData
 {

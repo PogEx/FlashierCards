@@ -1,0 +1,34 @@
+﻿@page "/login"
+@layout AnonymousLayout
+@rendermode InteractiveServer
+
+<PageTitle>Login</PageTitle>
+
+<div class="container-sm position-absolute top-50 start-50 translate-middle" style="max-width: 400px">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title text-center">Login</h1>
+            <form>
+                <div class="form-group mt-3 mb-3">
+                    <input type="text" class="form-control" id="email" placeholder="Enter Your username" @bind="_loginData.Username">
+                </div>
+                <div class="form-group mt-3 mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" @bind="_loginData.Password">
+                </div>
+                <div>
+                    <button type="button" class="btn btn-primary btn-block w-50" @onclick="LoginUser">
+                        <span class="material-symbols-outlined align-middle" style="color: var(--bs-body-color)">
+                            login
+                        </span>
+                    </button>
+                    <a href="/signup"><button type="button" class="btn btn-secondary btn-block w-25 float-end">
+                        <span class="material-symbols-outlined align-middle" style="color: var(--bs-body-color)">
+                            person_add
+                        </span>
+                    </button></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

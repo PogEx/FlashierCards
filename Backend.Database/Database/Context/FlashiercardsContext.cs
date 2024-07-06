@@ -7,32 +7,29 @@ namespace Backend.Database.Database.Context;
 
 public class FlashiercardsContext : DbContext
 {
-    private readonly DbConfig _configuration;
-    
-    public FlashiercardsContext(IConfiguration configuration = null)
+    public FlashiercardsContext()
     {
-        _configuration = configuration.GetSection("ConnectionStrings").Get<DbConfig>() ?? new DbConfig();
     }
 
-    public FlashiercardsContext(DbContextOptions<FlashiercardsContext> options, IConfiguration configuration = null)
+    public FlashiercardsContext(DbContextOptions<FlashiercardsContext> options)
         : base(options)
     {
-        _configuration = configuration.GetSection("ConnectionStrings").Get<DbConfig>() ?? new DbConfig();
     }
 
     public virtual DbSet<Card> Cards { get; set; }
 
     public virtual DbSet<CardType> CardTypes { get; set; }
+
     public virtual DbSet<Deck> Decks { get; set; }
-    
+
     public virtual DbSet<DeckInviteCode> DeckInviteCodes { get; set; }
+
     public virtual DbSet<Folder> Folders { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
+
     public virtual DbSet<UserSetting> UserSettings { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySql(_configuration.Mysqldb, ServerVersion.Parse("8.4.0-mysql"));
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -47,28 +44,50 @@ public class FlashiercardsContext : DbContext
 
             entity.HasIndex(e => e.Type, "card_content_card_types_id_fk");
 
+            entity.HasIndex(e => e.DeckId, "card_deck_deck_id_fk");
+
+            entity.HasIndex(e => e.BackId, "card_pk").IsUnique();
+
+            entity.HasIndex(e => e.UserId, "card_user_user_id_fk");
+
             entity.Property(e => e.CardId)
                 .HasMaxLength(36)
                 .HasColumnName("card_id");
-            entity.Property(e => e.Text)
-                .HasMaxLength(1023)
-                .HasColumnName("text");
             entity.Property(e => e.BackId)
                 .HasMaxLength(36)
                 .HasColumnName("back_card_id");
+            entity.Property(e => e.DeckId)
+                .HasMaxLength(36)
+                .HasColumnName("deck_id");
+            entity.Property(e => e.Text)
+                .HasMaxLength(1023)
+                .HasColumnName("text");
             entity.Property(e => e.Type).HasColumnName("type");
+            entity.Property(e => e.UserId)
+                .HasMaxLength(36)
+                .HasColumnName("user_id");
+
+            entity.HasOne(d => d.BackCard).WithOne(p => p.FrontCard)
+                .HasForeignKey<Card>(d => d.BackId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("card_card_card_id_fk");
+
+            entity.HasOne(d => d.Deck).WithMany(p => p.Cards)
+                .HasForeignKey(d => d.DeckId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("card_deck_deck_id_fk");
 
             entity.HasOne(d => d.TypeNavigation).WithMany(p => p.Cards)
                 .HasForeignKey(d => d.Type)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("card_content_card_types_id_fk");
-            
-            entity.HasOne(d => d.Back).WithOne(d => d.Front)
-                .HasForeignKey<Card>(d => d.BackId)
+
+            entity.HasOne(d => d.User).WithMany(p => p.Cards)
+                .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("card_card_card_id_fk");
+                .HasConstraintName("card_user_user_id_fk");
         });
-        
+
         modelBuilder.Entity<CardType>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -87,60 +106,53 @@ public class FlashiercardsContext : DbContext
 
             entity.ToTable("deck");
 
+            entity.HasIndex(e => e.FolderId, "deck_folder_folder_id_fk");
+
+            entity.HasIndex(e => e.UserId, "deck_user_user_id_fk");
+
             entity.Property(e => e.DeckId)
                 .HasMaxLength(36)
                 .HasColumnName("deck_id");
             entity.Property(e => e.DeckTitle)
                 .HasMaxLength(255)
                 .HasColumnName("deck_title");
+            entity.Property(e => e.FolderId)
+                .HasMaxLength(36)
+                .HasColumnName("folder_id");
+            entity.Property(e => e.UserId)
+                .HasMaxLength(36)
+                .HasColumnName("user_id");
 
-            entity.HasMany(d => d.Cards).WithMany(d => d.Deck)
-                .UsingEntity<Dictionary<string, object>>(
-                    "deck_card_link",
-                    r => r.HasOne<Card>().WithMany()
-                        .HasForeignKey("CardId")
-                        .HasConstraintName("deck_card_link_card_card_id_fk"),
-                    l => l.HasOne<Deck>().WithMany()
-                        .HasForeignKey("DeckId")
-                        .HasConstraintName("deck_card_link_deck_deck_id_fk"),
-                    j =>
-                    {
-                        j.HasKey("DeckId", "CardId")
-                            .HasName("PRIMARY")
-                            .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-                        j.ToTable("deck_card_link");
-                        j.HasIndex(["DeckId"], "deck_card_link_deck_deck_id_fk");
-                        j.IndexerProperty<Guid>("DeckId")
-                            .HasMaxLength(36)
-                            .HasColumnName("deck_id");
-                        j.IndexerProperty<Guid>("CardId")
-                            .HasMaxLength(36)
-                            .HasColumnName("card_id");
-                    });
+            entity.HasOne(d => d.Folder).WithMany(p => p.Decks)
+                .HasForeignKey(d => d.FolderId)
+                .HasConstraintName("deck_folder_folder_id_fk");
 
-            entity.HasMany(d => d.Users).WithMany(p => p.Decks)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UserDeckLink",
-                    r => r.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("subscription_user_guid_fk"),
-                    l => l.HasOne<Deck>().WithMany()
-                        .HasForeignKey("DeckId")
-                        .HasConstraintName("subscription_deck_deckId_fk"),
-                    j =>
-                    {
-                        j.HasKey("DeckId", "UserId")
-                            .HasName("PRIMARY")
-                            .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-                        j.ToTable("user_deck_link");
-                        j.HasIndex(["UserId"], "subscription_user_guid_fk");
-                        j.IndexerProperty<Guid>("DeckId")
-                            .HasMaxLength(36)
-                            .HasColumnName("deck_id");
-                        j.IndexerProperty<Guid>("UserId")
-                            .HasMaxLength(36)
-                            .HasColumnName("user_id");
-                    });
+            entity.HasOne(d => d.User).WithMany(p => p.Decks)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("deck_user_user_id_fk");
+        });
+
+        modelBuilder.Entity<DeckInviteCode>(entity =>
+        {
+            entity.HasKey(e => e.DeckId).HasName("PRIMARY");
+
+            entity.ToTable("deck_invite_codes");
+
+            entity.HasIndex(e => e.Code, "deck_invite_codes_pk").IsUnique();
+
+            entity.Property(e => e.DeckId)
+                .HasMaxLength(36)
+                .HasColumnName("deck_id");
+            entity.Property(e => e.Code)
+                .HasMaxLength(5)
+                .HasColumnName("code");
+            entity.Property(e => e.ExpiryTime)
+                .HasColumnType("datetime")
+                .HasColumnName("expiry_date");
+
+            entity.HasOne(d => d.Deck).WithOne(p => p.DeckInviteCode)
+                .HasForeignKey<DeckInviteCode>(d => d.DeckId)
+                .HasConstraintName("deck_invite_codes_deck_deck_id_fk");
         });
 
         modelBuilder.Entity<Folder>(entity =>
@@ -156,6 +168,9 @@ public class FlashiercardsContext : DbContext
             entity.Property(e => e.FolderId)
                 .HasMaxLength(36)
                 .HasColumnName("folder_id");
+            entity.Property(e => e.ColorHex)
+                .HasMaxLength(6)
+                .HasColumnName("color_hex");
             entity.Property(e => e.IsRoot)
                 .HasColumnType("bit(1)")
                 .HasColumnName("is_root");
@@ -168,9 +183,6 @@ public class FlashiercardsContext : DbContext
             entity.Property(e => e.UserId)
                 .HasMaxLength(36)
                 .HasColumnName("user_id");
-            entity.Property(e => e.ColorHex)
-                .HasMaxLength(6)
-                .HasColumnName("color_hex");
 
             entity.HasOne(d => d.Parent).WithMany(p => p.Children)
                 .HasForeignKey(d => d.ParentId)
@@ -180,59 +192,8 @@ public class FlashiercardsContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Folders)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("folder_user_user_id_fk");
-
-            entity.HasMany(d => d.Decks).WithMany(p => p.Folders)
-                .UsingEntity<Dictionary<string, object>>(
-                    "FolderDeckLink",
-                    r => r.HasOne<Deck>().WithMany()
-                        .HasForeignKey("DeckId")
-                        .HasConstraintName("folder_deck_link_deck_deck_id_fk"),
-                    l => l.HasOne<Folder>().WithMany()
-                        .HasForeignKey("FolderId")
-                        .HasConstraintName("folder_deck_link_folder_folder_id_fk"),
-                    j =>
-                    {
-                        j.HasKey("FolderId", "DeckId")
-                            .HasName("PRIMARY")
-                            .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-                        j.ToTable("folder_deck_link");
-                        j.HasIndex(["DeckId"], "folder_deck_link_deck_deck_id_fk");
-                        j.IndexerProperty<Guid>("FolderId")
-                            .HasMaxLength(36)
-                            .HasColumnName("folder_id");
-                        j.IndexerProperty<Guid>("DeckId")
-                            .HasMaxLength(36)
-                            .HasColumnName("deck_id");
-                    });
         });
 
-        modelBuilder.Entity<DeckInviteCode>(entity =>
-        {
-            entity.HasKey(e => e.DeckId).HasName("PRIMARY");
-            
-            entity.ToTable("deck_invite_codes");
-
-            entity.Property(e => e.DeckId)
-                .HasMaxLength(36)
-                .HasColumnName("deck_id");
-
-            entity.Property(e => e.Code)
-                .HasMaxLength(5)
-                .HasColumnName("code");
-
-            entity.Property(e => e.ExpiryTime)
-                .HasColumnType("datetime")
-                .HasColumnName("expiry_date");
-
-            entity.HasIndex(e => e.DeckId)
-                .IsUnique();
-            
-            entity.HasOne(e => e.Deck).WithOne(e => e.InviteCode)
-                .HasForeignKey<Deck>(d => d.DeckId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("deck_invite_codes_deck_deck_id_fk");
-        });
-        
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PRIMARY");
@@ -251,7 +212,6 @@ public class FlashiercardsContext : DbContext
             entity.Property(e => e.Salt)
                 .HasMaxLength(255)
                 .HasColumnName("salt");
-            entity.HasIndex(user => user.Name).IsUnique();
         });
 
         modelBuilder.Entity<UserSetting>(entity =>

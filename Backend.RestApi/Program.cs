@@ -23,8 +23,8 @@ public static class Program
             (HostBuilderContext context, ContainerBuilder builder) => 
                 SetupAutofacContainer(context, builder));
 
-        webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_CONFIG_PATH") + "db.json", optional: false, reloadOnChange: true);
-        webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_CONFIG_PATH") + "jwt.json", optional: false, reloadOnChange: true);
+        webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_BACKEND_CONFIG_PATH") + "db.json", optional: false, reloadOnChange: true);
+        webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_BACKEND_CONFIG_PATH") + "jwt.json", optional: false, reloadOnChange: true);
 
         webApplicationBuilder.Services.AddSerilog((services, lc) => 
             lc.ReadFrom.Configuration(webApplicationBuilder.Configuration)
@@ -46,7 +46,8 @@ public static class Program
                 ValidAudience = jwtSection.GetValue<string>("Audience"),
                 ValidateLifetime = true,
                 ValidateAudience = true,
-                ValidateIssuer = true
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true
             };
         });
         webApplicationBuilder.Services.AddAuthorization();
@@ -97,13 +98,13 @@ public static class Program
             app.UseSwaggerUI();
         }
         
-
+        app.UseAuthentication();
+        app.UseAuthorization();
+        
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
-
-        app.UseAuthentication();
-        app.UseAuthorization();
+        
         app.Run();
     }
 
