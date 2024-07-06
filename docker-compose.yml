@@ -38,10 +38,13 @@
         - "8081:8081"
     environment:
         ASPNETCORE_ENVIRONMENT: "Release"
+        FLASHIERCARDS_BACKEND_CONFIG_PATH: "/flashiercards/config/"
     volumes:
       - backend-config:/flashiercards/config
     depends_on:
       - db
+    networks:
+      - flashiercards
     
   db:
     image: mysql:latest
@@ -49,7 +52,7 @@
     stdin_open: true
     tty: true
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: 12345
       MYSQL_DATABASE: flashiercards
     ports:
       - "8079:3306"
@@ -57,6 +60,12 @@
     volumes:
       - db-data:/etc/data
       - db-config:/var/lib/mysql
+    networks:
+      - flashiercards
+        
+        
+networks:
+  flashiercards:
   
 volumes:
   db-data:

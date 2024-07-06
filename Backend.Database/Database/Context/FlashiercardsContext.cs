@@ -98,6 +98,16 @@ public class FlashiercardsContext : DbContext
             entity.Property(e => e.Type)
                 .HasMaxLength(255)
                 .HasColumnName("type");
+
+            entity.HasData([
+                new CardType { Id = 1, Type = "empty" },
+                new CardType { Id = 2, Type = "text/plain" },
+                new CardType { Id = 3, Type = "text/latex" },
+                new CardType { Id = 4, Type = "image/png" },
+                new CardType { Id = 5, Type = "image/svg" },
+                new CardType { Id = 6, Type = "image/jpg" },
+                new CardType { Id = 7, Type = "text/markdown" },
+            ]);
         });
 
         modelBuilder.Entity<Deck>(entity =>
@@ -192,6 +202,15 @@ public class FlashiercardsContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Folders)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("folder_user_user_id_fk");
+
+            entity.HasData(new Folder
+            {
+                FolderId = Guid.NewGuid(),
+                ColorHex = "FFFFFF",
+                IsRoot = true,
+                Name = "Home",
+                UserId = new Guid("e87f8052-cf90-43e4-900d-b75239d4b08f")
+            });
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -212,6 +231,14 @@ public class FlashiercardsContext : DbContext
             entity.Property(e => e.Salt)
                 .HasMaxLength(255)
                 .HasColumnName("salt");
+            
+            entity.HasData(new User
+            {
+                UserId = new Guid("e87f8052-cf90-43e4-900d-b75239d4b08f"), 
+                Name = "User", 
+                PasswordHash = "", 
+                Salt = ""
+            });
         });
 
         modelBuilder.Entity<UserSetting>(entity =>
