@@ -9,6 +9,7 @@ public partial class CardComponent : ComponentBase
 {
     
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
+    [Inject] public ILogger<CardComponent> _logger { get; set; }
     [Parameter] public Card Card { get; set; }
     [Parameter] public EventCallback<Card> OnCardDeleted { get; set; }
 
@@ -25,7 +26,7 @@ public partial class CardComponent : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 }

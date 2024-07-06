@@ -11,7 +11,7 @@ namespace Backend.Restart.Components.Pages;
 public partial class EditCard : ComponentBase
 {
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
-    
+    [Inject] public ILogger<EditCard> _logger { get; set; }
     [Inject] private NavigationManager Navigation { get; set; }
     private Card? FrontCard { get; set; }
 
@@ -39,7 +39,7 @@ public partial class EditCard : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
         
     }
@@ -58,7 +58,7 @@ public partial class EditCard : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 
@@ -75,7 +75,7 @@ public partial class EditCard : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 }

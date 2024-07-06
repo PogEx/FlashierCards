@@ -12,6 +12,7 @@ namespace Backend.Restart.Components;
 public partial class DeckComponent : ComponentBase
 {
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
+    [Inject] public ILogger<DeckComponent> _logger { get; set; }
     [Inject] public NavigationManager NavManager { get; set; }
     [Parameter] public GhostContainer<Deck> Container { get; set; }
 
@@ -54,7 +55,7 @@ public partial class DeckComponent : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 

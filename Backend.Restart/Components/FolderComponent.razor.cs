@@ -11,6 +11,7 @@ namespace Backend.Restart.Components;
 public partial class FolderComponent : ComponentBase
 {
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
+    [Inject] public ILogger<FolderComponent> _logger { get; set; }
     [Parameter] public GhostContainer<Folder> Container { get; set; }
 
     private InputText _inputField;
@@ -52,7 +53,7 @@ public partial class FolderComponent : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 }

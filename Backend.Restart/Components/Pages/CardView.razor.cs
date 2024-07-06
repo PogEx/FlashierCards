@@ -11,6 +11,7 @@ public partial class CardView : ComponentBase
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
     
     [Inject] private NavigationManager Navigation { get; set; }
+    [Inject] private ILogger<CardView> _logger { get; set; }
     private Card? FrontCard { get; set; }
 
     private Card? BackCard { get; set; }
@@ -37,7 +38,7 @@ public partial class CardView : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 
@@ -59,7 +60,7 @@ public partial class CardView : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
     
@@ -81,7 +82,7 @@ public partial class CardView : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 
@@ -103,7 +104,7 @@ public partial class CardView : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 
@@ -120,7 +121,7 @@ public partial class CardView : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 }
