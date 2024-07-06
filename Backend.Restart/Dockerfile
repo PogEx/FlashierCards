@@ -12,7 +12,7 @@ RUN chown -R $APP_UID:$APP_UID /flashiercards
 
 USER $APP_UID
 
-ENV FLASHIERCARDS_CONFIG_PATH "/flashiercards/config/"
+ENV FLASHIERCARDS_BACKEND_CONFIG_PATH "/flashiercards/config/"
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release

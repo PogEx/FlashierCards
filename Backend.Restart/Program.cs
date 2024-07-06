@@ -2,7 +2,6 @@ using Backend.Database.Database.Configs;
 using Backend.Database.Database.Context;
 using Backend.Restart.Components;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
