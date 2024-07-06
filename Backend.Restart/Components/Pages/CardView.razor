@@ -6,6 +6,7 @@
 <div class="d-flex justify-content-center align-items-center position-relative" style="height: calc(100vh - 100px); flex-direction: column; margin-top: 50px;">
     <div class="d-flex justify-content-end w-100 px-3" style="position: absolute; top: 20px; right: 20px;">
         <div class="d-flex align-items-center">
+            <a class="btn btn-primary" href="/folder/@FrontCard?.Deck.FolderId">Back</a>
             <a href="/Card/Edit/@FrontCard?.CardId" class="btn btn-success">Edit</a>
             <a href="/Deck/@FrontCard?.DeckId" class="btn btn-secondary ml-2">Card List</a>
             <a @onclick="DeleteCard" class="btn btn-danger">Delete</a>
