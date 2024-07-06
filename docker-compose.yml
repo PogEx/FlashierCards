@@ -24,7 +24,7 @@
       MYSQL_DATABASE: flashiercards
     ports:
       - "3306:3306"
-      - "22:22"
+      - "2222:22"
     volumes:
       - db-data:/etc/data
       - db-config:/var/lib/mysql
