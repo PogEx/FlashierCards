@@ -15,8 +15,6 @@ public partial class EditCard : ComponentBase
     [Inject] private NavigationManager Navigation { get; set; }
     private Card? FrontCard { get; set; }
 
-    public Boolean edit = false;
-
     private Card? BackCard { get; set; }
 
     [Parameter] public required string CardId { get; set; }
@@ -44,12 +42,6 @@ public partial class EditCard : ComponentBase
             Console.WriteLine(e);
         }
         
-    }
-
-    private Task EditCardBtn()
-    {
-        edit = !edit;
-        return Task.CompletedTask;
     }
 
     private async Task SaveCard()
