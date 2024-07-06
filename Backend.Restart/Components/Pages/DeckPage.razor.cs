@@ -11,6 +11,7 @@ public partial class DeckPage : ComponentBase
 {
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
     [Inject] public NavigationManager navManager { get; set; }
+    [Inject] public ILogger<DeckPage> _logger { get; set; }
     
     [Parameter] public string DeckId { get; set; }
     private Deck? deck;
@@ -30,7 +31,7 @@ public partial class DeckPage : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
     private async Task CreateCard()
@@ -67,7 +68,7 @@ public partial class DeckPage : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 
@@ -89,7 +90,7 @@ public partial class DeckPage : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
     
@@ -121,7 +122,7 @@ public partial class DeckPage : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 }

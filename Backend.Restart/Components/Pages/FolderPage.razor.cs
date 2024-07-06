@@ -13,6 +13,7 @@ public partial class FolderPage : ComponentBase
 {
     [Inject] public IDbContextFactory<FlashiercardsContext> DbContextFactory { get; set; }
     [Inject] public NavigationManager navManager { get; set; }
+    [Inject] public ILogger<FolderPage> _logger { get; set; }
     
     [Parameter] public string? FolderId { get; set; }
     private Folder? folder;
@@ -59,7 +60,7 @@ public partial class FolderPage : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
     
@@ -83,7 +84,7 @@ public partial class FolderPage : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
         return Task.CompletedTask;
     }
@@ -108,7 +109,7 @@ public partial class FolderPage : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
         return Task.CompletedTask;
     }
@@ -126,7 +127,7 @@ public partial class FolderPage : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
     
@@ -158,7 +159,7 @@ public partial class FolderPage : ComponentBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e, "A Database Error occured");
         }
     }
 }

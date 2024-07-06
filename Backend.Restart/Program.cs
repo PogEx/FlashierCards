@@ -18,6 +18,9 @@ builder.Services.AddDbContextFactory<FlashiercardsContext>(options =>
 builder.Configuration
     .AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_BACKEND_CONFIG_PATH") + "db.json", optional: false, reloadOnChange: true);
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,9 +39,11 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+app.Services.GetRequiredService<ILogger<Program>>().LogInformation("Creating Database!");
 using (FlashiercardsContext context = await app.Services.GetRequiredService<IDbContextFactory<FlashiercardsContext>>().CreateDbContextAsync())
 {
     context.Database.EnsureCreated();
 }
+app.Services.GetRequiredService<ILogger<Program>>().LogInformation("Database Created!");
 
 app.Run();
