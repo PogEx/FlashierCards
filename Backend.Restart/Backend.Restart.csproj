@@ -11,6 +11,9 @@
     </ItemGroup>
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Components\Pages\Card\List.razor" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.bundle.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.bundle.min.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\bootstrap\bootstrap.min.css" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="..\.dockerignore">
