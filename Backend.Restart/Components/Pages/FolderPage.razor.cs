@@ -44,7 +44,7 @@ public partial class FolderPage : ComponentBase
                         .ThenInclude(d => d.Cards)
                         .FirstOrDefaultAsync(folder => folder.FolderId == folderGuid);
                 }
-
+                FolderId = folder.FolderId.ToString();
                 _folders = folder.Children
                     .OrderBy(f => f.Name.Length)
                     .ThenBy(f => f.Name)
@@ -63,7 +63,7 @@ public partial class FolderPage : ComponentBase
         }
     }
     
-    private async Task CreateFolder()
+    private Task CreateFolder()
     {
         //Open Name and color Form
 
@@ -79,16 +79,18 @@ public partial class FolderPage : ComponentBase
                 UserId = Guid.Parse("e87f8052-cf90-43e4-900d-b75239d4b08f")
             };
             _folders.Add(new() { Payload = folder, GhostComponent = true });
+            
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
         }
+        return Task.CompletedTask;
     }
     
     
     
-    private async Task CreateDeck()
+    private Task CreateDeck()
     {
         //Open Name and color Form
 
@@ -102,11 +104,13 @@ public partial class FolderPage : ComponentBase
                 UserId = Guid.Parse("e87f8052-cf90-43e4-900d-b75239d4b08f")
             };
             _decks.Add(new() { Payload = deck, GhostComponent = true });
+            return Task.CompletedTask;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
         }
+        return Task.CompletedTask;
     }
 
     private async Task DeleteFolder()
@@ -125,6 +129,7 @@ public partial class FolderPage : ComponentBase
             Console.WriteLine(e);
         }
     }
+    
     private async Task SubmitFolderName(KeyboardEventArgs args)
     {
         if (_edit && args.Key == "Enter")

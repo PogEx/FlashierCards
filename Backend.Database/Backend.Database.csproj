@@ -15,8 +15,4 @@
       <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
       <PackageReference Include="Supercode.Blazor.BreadcrumbNavigation" Version="1.3.2" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Entities\" />
-    </ItemGroup>
 </Project>

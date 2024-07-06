@@ -9,7 +9,7 @@
     @if (deck is not null)
     {
         <div class="container d-flex justify-content-between p-0">
-            <div class=" mt-3">
+            <div class="mt-3">
                 @if (_edit)
                 {
                 <InputText @bind-Value="deck.DeckTitle" @ref="_inputField" @onkeyup="SubmitDeckName" @onblur="lostFocus"></InputText>
