@@ -8,7 +8,8 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5066",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "FLASHIERCARDS_BACKEND_CONFIG_PATH": "./configs/"
       }
     },
     "https": {
@@ -18,7 +19,16 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7243;http://localhost:5066",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "FLASHIERCARDS_BACKEND_CONFIG_PATH": "./configs/"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "FLASHIERCARDS_BACKEND_CONFIG_PATH": "./configs/"
       }
     }
   }

@@ -2,9 +2,13 @@ using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Backend.RestApi.IoC.Modules;
+using Backend.RestApi.Logging;
+using FluentResults;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace Backend.RestApi;
 
@@ -17,8 +21,16 @@ public static class Program
         webApplicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         webApplicationBuilder.Host.ConfigureContainer(
             (HostBuilderContext context, ContainerBuilder builder) => 
-                SetupAutofacContainer(context, builder, webApplicationBuilder.Configuration));
+                SetupAutofacContainer(context, builder));
 
+        webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_BACKEND_CONFIG_PATH") + "db.json", optional: false, reloadOnChange: true);
+        webApplicationBuilder.Configuration.AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_BACKEND_CONFIG_PATH") + "jwt.json", optional: false, reloadOnChange: true);
+
+        webApplicationBuilder.Services.AddSerilog((services, lc) => 
+            lc.ReadFrom.Configuration(webApplicationBuilder.Configuration)
+                .ReadFrom.Services(services)
+                .Enrich.FromLogContext());
+        
         webApplicationBuilder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -34,11 +46,12 @@ public static class Program
                 ValidAudience = jwtSection.GetValue<string>("Audience"),
                 ValidateLifetime = true,
                 ValidateAudience = true,
-                ValidateIssuer = true
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true
             };
         });
         webApplicationBuilder.Services.AddAuthorization();
-        
+
         webApplicationBuilder.Services
             .AddControllers()
             .AddControllersAsServices();
@@ -71,30 +84,38 @@ public static class Program
         webApplicationBuilder.Services.AddEndpointsApiExplorer();
         
         WebApplication app = webApplicationBuilder.Build();
+        InitResultLogger(Log.Logger);
         
         app.UseRouting();
         app.UseHttpsRedirection();
         
         if (app.Environment.IsDevelopment())
         {
+            app.UseSerilogRequestLogging();
             app.UseDeveloperExceptionPage();
             app.UseHsts();
             app.UseSwagger();
             app.UseSwaggerUI();
         }
         
-
+        app.UseAuthentication();
+        app.UseAuthorization();
+        
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
-
-        app.UseAuthentication();
-        app.UseAuthorization();
+        
         app.Run();
     }
 
-    private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder, IConfiguration configuration)
+    private static void SetupAutofacContainer(HostBuilderContext _, ContainerBuilder builder)
     {
-        builder.RegisterModule(new RestModule(configuration));
+        builder.RegisterModule(new RestModule());
+        builder.RegisterInstance(Log.Logger).As<ILogger>();
+    }
+
+    private static void InitResultLogger(ILogger logger)
+    {
+        Result.Setup(cfg => cfg.Logger = new ResultLogger(logger));
     }
 }

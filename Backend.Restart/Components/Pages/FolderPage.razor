@@ -1,0 +1,73 @@
+﻿@page "/"
+@page "/folder/{FolderId}"
+@using Backend.Database.Database.DatabaseModels
+@using Backend.Restart.Models
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<div class="container-lg my-5">
+
+    @if (folder is not null)
+    {
+        @if (folder.ParentId != null)
+        {
+            <div class="container d-flex justify-content-between p-0">
+                <div class=" mt-3">
+                    @if (_edit)
+                    {
+                        <InputText @bind-Value="folder.Name" @ref="_inputField" @onkeyup="SubmitFolderName" @onblur="lostFocus"></InputText>
+                    }
+                    else
+                    {
+                        <h1 @onclick="() => _edit = !_edit">@folder.Name</h1>
+                    }
+                </div>
+                <div class="me-3 mt-3">
+                    <a class="btn btn-primary" href="/folder/@folder.ParentId">Back</a>
+                    <a class="btn btn-danger" @onclick="DeleteFolder">Delete Folder</a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="mt-3">
+                <h1>@folder.Name</h1>
+            </div>
+        }
+    }
+    <div class="row">
+        @if (_folders.Count == 0 && _decks.Count == 0)
+        {
+            <p>Nothing here!</p>
+        }
+        <div class="col d-flex flex-wrap">
+            @foreach (GhostContainer<Folder> container in _folders)
+            {
+                <FolderComponent Container="container"></FolderComponent>
+            }
+
+            @foreach (GhostContainer<Deck> container in _decks)
+            {
+                <DeckComponent Container="container"></DeckComponent>
+            }
+
+            <div class="col-2">
+                <a class="btn" @onclick="CreateFolder">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#e8eaed">
+                        <path d="M560-320h80v-80h80v-80h-80v-80h-80v80h-80v80h80v80ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/>
+                    </svg>
+                    <label>New Folder</label>
+                </a>
+            </div>
+            <div class="col-2">
+                <a class="btn" @onclick="CreateDeck">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 -960 960 960" width="100%" fill="#e8eaed">
+                        <path d="M440-240h80v-120h120v-80H520v-120h-80v120H320v80h120v120ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
+                    </svg>
+                    <label>New Deck</label>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

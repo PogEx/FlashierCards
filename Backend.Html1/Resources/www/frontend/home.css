@@ -1,0 +1,122 @@
+﻿.navbar-custom {
+    background-color: #DCDCDC;
+    border-top: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    margin-top: 30px;
+    height: 60px; 
+    display: flex;
+    align-items: center; 
+    padding: 0 20px; 
+}
+
+.container-custom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    width: 100%;
+}
+
+.content-left h5,
+.content-right h5 {
+    margin: 10px;
+}
+
+.btn:hover{
+    color: aqua;
+}
+
+.breadcrumbnav {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumbnav li::after {
+    content: "  >     ";
+}
+
+.breadcrumbnav li:last-child::after {
+    content: "";
+}
+.breadcrumbnav a{
+    font-weight: normal;
+    text-decoration: none;
+    color: blue;
+}
+
+.breadcrumbnav a:hover{
+    color: mediumpurple;
+    text-decoration: underline;
+}
+
+.dropbtn{
+    background: #DCDCDC ;
+    color: black;
+    padding: 16px;
+    font-size: 16px;
+    width: 200px;
+}
+
+.dropdown{
+    position: relative;
+    display: block;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+    z-index: 1;
+}
+.dropdown-content a {
+    color: Black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #DCDCEF;
+}
+
+.menu{
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    justify-content: space-around;
+    flex-wrap: wrap;
+    background-color: #e6fdf4;
+}
+
+.folder img{
+    width: 100px;
+    height: 100px;
+    margin-bottom: 5px;
+}
+
+.folder span{
+    margin-bottom: 5px;
+}
+
+.folder:hover {
+    background-color: #d1d1d1;
+}
+
+.fixed-bottom.custom-hover:hover{
+    color:  black;
+    background-color: blue;
+}
+
+.fixed-bottom.custom-hover.dropdown-content  {
+    background-color: #45a049;
+    color: #ffffff ;
+}

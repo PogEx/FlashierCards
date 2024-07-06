@@ -1,58 +1,42 @@
 ﻿services:
-  backend.restapi:
-    image: ghcr.io/pogex/flashiercards:develop-rest
+  backend:
+    image: ghcr.io/pogex/flashiercards-backend.restart:develop
     restart: unless-stopped
     ports:
-      - "8080:8080"
-      - "8081:8081"
+        - "8080:8080"
+        - "8081:8081"
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
-    networks:
-      - "frontend"
-      - "database"
+        ASPNETCORE_ENVIRONMENT: "Release"
     volumes:
-      - rest-backend-data-store:/app/data
-      - rest-backend-app:/app
+      - backend-config:/flashiercards/config
     depends_on:
       - db
-
-  backend.html:
-    image: ghcr.io/pogex/flashiercards:develop-html
-    restart: unless-stopped
-    ports:
-      - "8082:8080"
-      - "8083:8081"
-    environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
     networks:
-      - "frontend"
-    volumes:
-      - html-backend-app:/app
-    depends_on:
-      - backend.restapi
+      - flashiercards
     
   db:
     image: mysql:latest
     restart: unless-stopped
+    stdin_open: true
+    tty: true
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: flashiercards
     ports:
-      - "8079:3306"
-    networks:
-      - "database"
+      - "3306:3306"
+      - "22:22"
     volumes:
       - db-data:/etc/data
       - db-config:/var/lib/mysql
-  
+    networks:
+      - flashiercards
+              
 networks:
-  frontend: {}
-  database: {}
+  flashiercards:
   
 volumes:
   db-data:
   db-config:
-  rest-backend-data-store:
-  rest-backend-app:
-  html-backend-app:
+  backend-config:
+
   

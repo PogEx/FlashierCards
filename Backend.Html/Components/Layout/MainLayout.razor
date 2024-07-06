@@ -1,0 +1,35 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary p-3" aria-label="breadcrumb">
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Library</a></li>
+                <li class="breadcrumb-item"><a href="#">Folder1</a></li>
+                <li class="breadcrumb-item"><a href="#">Folder2</a></li>
+                <li class="breadcrumb-item"><a href="#">Folder3</a></li>
+                <li class="breadcrumb-item"><a href="#">Folder4</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Data</li>
+            </ol>
+        </nav>
+        <div class="collapse navbar-collapse" id="navbarNav"></div>
+        <nav>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-secondary dropdown-toggle m-1" data-bs-toggle="dropdown" aria-expanded="false" >
+                    User
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class=" dropdown-item" href="#"> Settings</a></li>
+                    <li><a class=" dropdown-item" href="#"> Profile</a></li>
+                </ul>
+            <ThemeToggler/>
+            </div>
+        </nav>
+    </nav>
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

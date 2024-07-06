@@ -1,51 +1,55 @@
 ﻿using Backend.Common.Models.Folders;
+using Backend.RestApi.Contracts.Content;
+using Backend.RestApi.Helpers.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Backend.RestApi.Controllers;
 
 [Route("folder")]
 [Controller]
 [Authorize]
-public class FolderController : Controller
+public class FolderController(IFolderHandler folderHandler) : Controller
 {
-    [HttpGet("userroot")]
-    public IActionResult GetUserRoot()
-    {
-        return Ok();
-    }
-
-    [HttpGet("parent")]
-    public IActionResult GetParent([FromQuery, BindRequired] Guid guid)
-    {
-        return Ok();
-    }
-    
     [HttpPost]
-    public IActionResult CreateFolder(
-        [FromBody, BindRequired] FolderCreateData createData)
+    public async Task<IActionResult> CreateFolder(
+        [FromBody, BindRequired] FolderCreateData data
+        )
     {
-        return Ok();
-    }
-
-    [HttpGet]
-    public IActionResult GetFolder([FromQuery] Guid folderId)
-    {
-        return Ok();
+        return Ok((await folderHandler.CreateFolder(
+            User.GetCurrentUser(),
+            data)).Value);
     }
     
     [HttpPatch]
-    public IActionResult ChangeFolder(
-        [FromQuery] Guid folderId,
-        [FromBody] FolderChangeData changeData)
+    public async Task<IActionResult> ChangeFolder(
+        [FromQuery(Name = "id"), BindRequired] Guid id,
+        [FromBody, BindRequired] FolderChangeData data
+        )
     {
+        await folderHandler.ChangeFolder(User.GetCurrentUser(), id, data);
         return Ok();
     }
     
     [HttpDelete]
-    public IActionResult DeleteFolder([FromQuery] Guid folderId)
+    public async Task<IActionResult> DeleteFolder(
+        [FromQuery(Name = "id"), BindRequired] Guid id
+        )
     {
+        (await folderHandler.DeleteFolder(User.GetCurrentUser(), id)).Log();
         return Ok();
+    }
+    
+    [HttpGet]
+    [SwaggerResponse(200, null, typeof(FolderDto))]
+    public async Task<IActionResult> GetFolder(
+        [FromQuery(Name = "id")] Guid guid)
+    {
+        return Ok((await folderHandler.GetFolder(
+            User.GetCurrentUser(),
+            guid
+        )).Value);
     }
 }

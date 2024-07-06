@@ -20,7 +20,7 @@ jobs:
       
     strategy:
       matrix: 
-        projects: ["Backend.RestApi", "Backend.Html"]
+        projects: ["Backend.Restart"]
     
     steps:
       - uses: actions/checkout@v4

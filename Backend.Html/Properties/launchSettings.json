@@ -1,25 +1,41 @@
-﻿{
+{
   "$schema": "http://json.schemastore.org/launchsettings.json",
-  "profiles": {
-    "http": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:8080",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+    "iisSettings": {
+      "windowsAuthentication": false,
+      "anonymousAuthentication": true,
+      "iisExpress": {
+        "applicationUrl": "http://localhost:18427",
+        "sslPort": 44302
       }
     },
-    "https": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7118; http://localhost:5226",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+    "profiles": {
+      "http": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "launchBrowser": true,
+        "applicationUrl": "http://localhost:5036",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "FLASHIERCARDS_FRONTEND_CONFIG_PATH": "./configs/"
+        }
+      },
+      "https": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "launchBrowser": true,
+        "applicationUrl": "https://localhost:7236;http://localhost:5036",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "FLASHIERCARDS_FRONTEND_CONFIG_PATH": "./configs/"
+        }
+      },
+      "IIS Express": {
+        "commandName": "IISExpress",
+        "launchBrowser": true,
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "FLASHIERCARDS_FRONTEND_CONFIG_PATH": "./configs/"
+        }
       }
     }
   }
-}

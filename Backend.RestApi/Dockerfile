@@ -4,6 +4,16 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+USER root
+RUN mkdir -p /flashiercards/data
+RUN mkdir -p /flashiercards/config
+
+RUN chown -R $APP_UID:$APP_UID /flashiercards
+
+USER $APP_UID
+
+ENV FLASHIERCARDS_CONFIG_PATH "/flashiercards/config/"
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Debug
 WORKDIR /src

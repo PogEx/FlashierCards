@@ -1,0 +1,51 @@
+﻿@page "/card"
+@rendermode InteractiveServer
+@inject NavigationManager navManager
+
+<PageTitle>Create Card</PageTitle>
+
+<div class=" d-flex justify-content-center align-items-center position-absolute top-50 start-50 translate-middle">
+    <div class="row">
+        <CreateCardComponent Title="Question"></CreateCardComponent>
+        @if (!withback)
+        {
+            <div class="col-sm-6">
+                <div class="card text-center align-content-center bg-secondary mb-3">
+                    <div class="card-body d-flex justify-content-center align-items-center" style="width: 24rem; height: 18rem;">
+                        <form>
+                            <button @onclick="Button_click" class="btn btn-secondary rounded-circle btn-circle" style="aspect-ratio: 1/1;" name="name" value="add">
+                                <span class="material-symbols-outlined align-middle">
+                                    add
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+        <CreateCardComponent Title="Answer"></CreateCardComponent>
+        }
+    </div>
+</div>
+
+<button class="btn btn-secondary position-absolute top-50 start-0 translate-middle" style="margin-right: 100px ">
+    <span class="material-symbols-outlined fix">
+        arrow_back
+    </span>
+</button>
+
+<button class="btn btn-secondary position-absolute top-50 start-100 translate-middle" style="margin-right: 100px ">
+    <span class="material-symbols-outlined fix">
+        arrow_forward
+    </span>
+</button>
+
+
+
+<button class="btn btn-success position-absolute top-100 start-50 translate-middle rounded-circle">
+    <span class="material-symbols-outlined fix">
+        check
+    </span>
+</button>

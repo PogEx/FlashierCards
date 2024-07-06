@@ -32,6 +32,8 @@ bld/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
+**/configs
+
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
@@ -797,4 +799,9 @@ fabric.properties
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
-# End of https://www.toptal.com/developers/gitignore/api/aspnetcore,csharp,rider,visualstudio,visualstudiocode
+# End of https://www.toptal.com/developers/gitignore/api/aspnetcore,csharp,rider,visualstudio,visualstudiocode### Sass template
+.sass-cache/
+*.css.map
+*.sass.map
+*.scss.map
+
