@@ -9,7 +9,7 @@
             <a class="btn btn-primary" href="/folder/@FrontCard?.Deck.FolderId">Back</a>
             <a href="/Card/View/@CardId" class="btn btn-success">Cancel Edit</a>
             <a href="/Deck/@FrontCard?.DeckId" class="btn btn-secondary ml-2">Card List</a>
-            <a @onclick="DeleteCard" class="btn btn-danger">Delete</a>
+            <a @onclick="DeleteCard" class="btn btn-danger">Delete Card</a>
         </div>
     </div>
         @if (FrontCard is not null && BackCard is not null)
