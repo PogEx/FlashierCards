@@ -1,6 +1,6 @@
 ﻿services:
   backend:
-    image: ghcr.io/pogex/flashiercards-backend.restart:develop
+    image: ghcr.io/pogex/flashiercards-backend.restart:main
     restart: unless-stopped
     ports:
         - "8080:8080"
@@ -8,7 +8,7 @@
     environment:
         ASPNETCORE_ENVIRONMENT: "Release"
     volumes:
-      - backend-config:/flashiercards/config
+      - ${PATH_TO_CONFIG}:/flashiercards/config
     depends_on:
       - db
     networks:
@@ -24,7 +24,7 @@
       MYSQL_DATABASE: flashiercards
     ports:
       - "3306:3306"
-      - "22:22"
+      - "2222:22"
     volumes:
       - db-data:/etc/data
       - db-config:/var/lib/mysql
@@ -37,6 +37,5 @@ networks:
 volumes:
   db-data:
   db-config:
-  backend-config:
 
   
