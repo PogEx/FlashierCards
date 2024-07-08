@@ -12,8 +12,11 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContextFactory<FlashiercardsContext>(options =>
 {
     options.UseMySql(builder.Configuration.GetSection("ConnectionStrings").Get<DbConfig>()?.Mysqldb,
-        ServerVersion.Parse("8.4.0-mysql"));
-});
+        ServerVersion.Parse("8.4.0-mysql"), optionsBuilder =>
+        {
+            optionsBuilder.EnableRetryOnFailure();
+        });
+    });
 
 builder.Configuration
     .AddJsonFile(Environment.GetEnvironmentVariable("FLASHIERCARDS_BACKEND_CONFIG_PATH") + "db.json", optional: false, reloadOnChange: true);
