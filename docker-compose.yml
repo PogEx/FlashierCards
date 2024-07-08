@@ -8,7 +8,7 @@
     environment:
         ASPNETCORE_ENVIRONMENT: "Release"
     volumes:
-      - backend-config:/flashiercards/config
+      - ${PATH_TO_CONFIG}:/flashiercards/config
     depends_on:
       - db
     networks:
@@ -37,6 +37,5 @@ networks:
 volumes:
   db-data:
   db-config:
-  backend-config:
 
   
